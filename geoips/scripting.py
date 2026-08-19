@@ -12,6 +12,7 @@ from geoips.utils.types.script_datatree import (
     get_output_products,
     initialize_script_tree,
 )
+import geoips.xarray_utils.accessors
 
 __all__ = [
     "RETENTION_POLICIES",
