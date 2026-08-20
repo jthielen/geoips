@@ -1,0 +1,16 @@
+[
+    {
+        "version": "latest",
+        "url": "https://nrlmmd-geoips.github.io/geoips/latest/",
+        "is_latest": true
+    },
+    {
+        "name": "v1.18",
+        "version": "1.18",
+        "url": "https://nrlmmd-geoips.github.io/geoips/v1.18/"
+    },
+    {
+        "version": "dev",
+        "url": "https://nrlmmd-geoips.github.io/geoips/dev/"
+    }
+]
