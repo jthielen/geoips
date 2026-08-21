@@ -1,40 +1,12 @@
-Version 1.17.1 (2026-07-23)
+Version 1.17.1 (2026-08-21)
 ***************************
 
- * *Release updates*: Bug fixes on the open source github.com geoips site integration tests.
- * *Release updates*: Geoips repo - update tagged_version and upcoming_version
  * *Documentation*: Add release note for version 1.17.1
  * *Documentation*: Update upcoming and tagged versions
+ * *Release updates*: Bug fixes on the open source github.com geoips site integration tests.
+ * *Release updates*: Geoips repo - update tagged_version and upcoming_version
  * *Bug fix*: Minor bugfixes for readers and algorithms
  * *Bug fixes*: Bug fixes on 1.17.1
-
-Release updates
-===============
-
-Bug fixes on the open source github.com geoips site integration tests.
-----------------------------------------------------------------------
-
-Bug fixes required to get the GeoIPS Site integration tests to pass on all available
-github.com open source repositories.
-
-Also update standard sync files
-
-::
-
-     modified: docs/source/releases/
-
-Geoips repo - update tagged_version and upcoming_version
---------------------------------------------------------
-
-tagged_version 1.17.1 (site-nrlmmd bug fixes)
-upcoming_version 1.17.2 (system bug fixes)
-
-geoips#959 - 1.17.0 updates*
-
-::
-
-     modified: .github/versions/upcoming_version
-     modified: .github/versions/tagged_version
 
 Documentation
 =============
@@ -66,6 +38,34 @@ geoips#959 - 1.17.1 updates
 
      modified: .github/versions/tagged_version
      modified: .github/versions/upcoming_version
+
+Release updates
+===============
+
+Bug fixes on the open source github.com geoips site integration tests.
+----------------------------------------------------------------------
+
+Bug fixes required to get the GeoIPS Site integration tests to pass on all available
+github.com open source repositories.
+
+Also update standard sync files
+
+::
+
+     modified: docs/source/releases/
+
+Geoips repo - update tagged_version and upcoming_version
+--------------------------------------------------------
+
+tagged_version 1.17.1 (site-nrlmmd bug fixes)
+upcoming_version 1.17.2 (system bug fixes)
+
+geoips#959 - 1.17.0 updates*
+
+::
+
+     modified: .github/versions/upcoming_version
+     modified: .github/versions/tagged_version
 
 Bug fix
 =======

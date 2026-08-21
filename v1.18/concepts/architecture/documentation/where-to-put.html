@@ -206,7 +206,7 @@ const runMermaid = async (rerun) => {
                                     // Apply zoom to the now-rendered diagram, matching
                                     // the decoration visible diagrams receive.
                                     if (true) {
-                                        addZoomToSvgs(d3.selectAll(".mermaid[data-zoom-id=id-81afb771-c267-4990-b4d1-1ecdc4cb02ae]").select(function() {
+                                        addZoomToSvgs(d3.selectAll(".mermaid[data-zoom-id=id-09c6ab85-3fe5-4196-ab92-04d6774b8855]").select(function() {
                                             return this.querySelector("svg");
                                         }));
                                     }
@@ -232,7 +232,7 @@ const runMermaid = async (rerun) => {
     if (true) {
         const mermaids_to_add_zoom = 1 === -1 ? mermaids_active.length : 1;
         if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll(".mermaid[data-zoom-id=id-81afb771-c267-4990-b4d1-1ecdc4cb02ae]").select(function() {
+            var svgs = d3.selectAll(".mermaid[data-zoom-id=id-09c6ab85-3fe5-4196-ab92-04d6774b8855]").select(function() {
                 return this.querySelector("svg");
             });
             // Wait until every active (visible) diagram has rendered. Deferred
@@ -402,6 +402,13 @@ mermaid.initialize(
 window.addEventListener("load", load);
 window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'concepts/architecture/documentation/where-to-put';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://jthielen.github.io/geoips/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.18';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../../_static/nrlicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -411,7 +418,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0" />
-    <meta name="docbuild:last-update" content="Aug 21, 2026 13:06:27"/>
+    <meta name="docbuild:last-update" content="Aug 21, 2026 13:34:55"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -488,6 +495,26 @@ window.runMermaid = runMermaid;</script>
   
   
 </a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
     
   </div>
   
@@ -875,7 +902,7 @@ window.runMermaid = runMermaid;</script>
 <section id="flowchart">
 <h2>Flowchart<a class="headerlink" href="#flowchart" title="Permalink to this heading">#</a></h2>
 <p>Please use this flowchart to figure out where to put new documentation.</p>
-<pre data-zoom-id="id-81afb771-c267-4990-b4d1-1ecdc4cb02ae" class="mermaid">
+<pre data-zoom-id="id-09c6ab85-3fe5-4196-ab92-04d6774b8855" class="mermaid">
         flowchart TD
     Start[Start]
     DocBuild{Are you modifying the homepage or how the documentation is built?}
