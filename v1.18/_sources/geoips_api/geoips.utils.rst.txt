@@ -1,0 +1,45 @@
+geoips.utils package
+====================
+
+Submodules
+----------
+
+geoips.utils.cache\_files module
+--------------------------------
+
+.. automodule:: geoips.utils.cache_files
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.utils.composite module
+-----------------------------
+
+.. automodule:: geoips.utils.composite
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.utils.context\_managers module
+-------------------------------------
+
+.. automodule:: geoips.utils.context_managers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.utils.decorators module
+------------------------------
+
+.. automodule:: geoips.utils.decorators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: geoips.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

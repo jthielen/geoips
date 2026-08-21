@@ -1,0 +1,141 @@
+geoips.commandline package
+==========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   geoips.commandline.ancillary_info
+
+Submodules
+----------
+
+geoips.commandline.args module
+------------------------------
+
+.. automodule:: geoips.commandline.args
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.cmd\_instructions module
+-------------------------------------------
+
+.. automodule:: geoips.commandline.cmd_instructions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.commandline\_interface module
+------------------------------------------------
+
+.. automodule:: geoips.commandline.commandline_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_command module
+-----------------------------------------
+
+.. automodule:: geoips.commandline.geoips_command
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_config module
+----------------------------------------
+
+.. automodule:: geoips.commandline.geoips_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_describe module
+------------------------------------------
+
+.. automodule:: geoips.commandline.geoips_describe
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_list module
+--------------------------------------
+
+.. automodule:: geoips.commandline.geoips_list
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_run module
+-------------------------------------
+
+.. automodule:: geoips.commandline.geoips_run
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_test module
+--------------------------------------
+
+.. automodule:: geoips.commandline.geoips_test
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_tree module
+--------------------------------------
+
+.. automodule:: geoips.commandline.geoips_tree
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.geoips\_validate module
+------------------------------------------
+
+.. automodule:: geoips.commandline.geoips_validate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.list\_available\_plugins module
+--------------------------------------------------
+
+.. automodule:: geoips.commandline.list_available_plugins
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.log\_setup module
+------------------------------------
+
+.. automodule:: geoips.commandline.log_setup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.run\_procflow module
+---------------------------------------
+
+.. automodule:: geoips.commandline.run_procflow
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.commandline.update\_tc\_tracks\_database module
+------------------------------------------------------
+
+.. automodule:: geoips.commandline.update_tc_tracks_database
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: geoips.commandline
+   :members:
+   :undoc-members:
+   :show-inheritance:
