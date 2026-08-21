@@ -133,11 +133,16 @@ html_theme_options = {
     "navigation_with_keys": False,
     "footer_end": ["geoips_footer"],
     "github_url": "https://github.com/NRLMMD-GEOIPS/PKGNAME",
+    "navbar_start": ["navbar-logo", "version-switcher"],
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
     "logo": {
         "image_light": "_static/NRL_logo_RGB.jpg",
         "image_dark": "_static/NRL_logo_sidebar_Reverse.png",
     },
+    "switcher": {
+        "json_url": "https://nrlmmd-geoips.github.io/geoips/versions.json",
+        "version_match": "1.18", # fixed for backported version
+    }
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
