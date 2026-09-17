@@ -178,7 +178,7 @@ html_theme_options = {
         "image_dark": "_static/geoips_logo.png",
     },
     "switcher": {
-        "json_url": "https://nrlmmd-geoips.github.io/geoips/versions.json",
+        "json_url": "https://jthielen.github.io/geoips/versions.json",
         "version_match": docs_version,
     }
 }
