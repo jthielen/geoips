@@ -13,10 +13,6 @@ name: Package/publish
 #    * deploy docs with geoips/docs/deploy_pages.sh
 
 on:
-  # triggers the workflow on published release
-  release:
-    types:
-      - published
   # allows run of this workflow manually from the actions tab
   # must be merged to default before it will be available to manually run.
   workflow_dispatch:

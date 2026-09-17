@@ -181,7 +181,7 @@ html_theme_options = {
 if use_versioned_docs:
     html_theme_options["navbar_start"] = ["navbar-logo", "version-switcher"]
     html_theme_options["switcher"] = {
-        "json_url": "https://nrlmmd-geoips.github.io/PKGNAME/versions.json",  # REVIEW
+        "json_url": "https://jthielen.github.io/PKGNAME/versions.json",  # REVIEW
         # (Change URL if using versioned docs deployed to different org name/domain)
         "version_match": docs_version,
     }
