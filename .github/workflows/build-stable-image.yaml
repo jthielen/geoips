@@ -22,11 +22,6 @@ name: Build stable docker image
 # on the default branch and on tag/release.
 
 on:
-  # triggers the workflow on published release, this will build the 'stable' image
-  release:
-    types:
-      - published
-  # triggers the workflow on pushes to the default branch, this will build the 'latest' image
   push:
     branches:
       - main
