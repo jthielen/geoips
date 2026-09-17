@@ -34,3 +34,14 @@ jobs:
       contents: write
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
+
+  push-to-ghpages:
+    name: Push to GitHub Pages (static)
+    uses: jthielen/geoips/.github/workflows/static-ghpages.yml@dev-main
+    needs: deploy-docs
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
