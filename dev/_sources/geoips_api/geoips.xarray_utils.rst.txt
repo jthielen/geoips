@@ -1,0 +1,45 @@
+geoips.xarray\_utils package
+============================
+
+Submodules
+----------
+
+geoips.xarray\_utils.coords module
+----------------------------------
+
+.. automodule:: geoips.xarray_utils.coords
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.xarray\_utils.data module
+--------------------------------
+
+.. automodule:: geoips.xarray_utils.data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.xarray\_utils.time module
+--------------------------------
+
+.. automodule:: geoips.xarray_utils.time
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geoips.xarray\_utils.xr\_to\_dtree module
+-----------------------------------------
+
+.. automodule:: geoips.xarray_utils.xr_to_dtree
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: geoips.xarray_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

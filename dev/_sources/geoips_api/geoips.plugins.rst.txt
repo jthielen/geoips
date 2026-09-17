@@ -1,0 +1,19 @@
+geoips.plugins package
+======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   geoips.plugins.classes
+   geoips.plugins.modules
+
+Module contents
+---------------
+
+.. automodule:: geoips.plugins
+   :members:
+   :undoc-members:
+   :show-inheritance:
