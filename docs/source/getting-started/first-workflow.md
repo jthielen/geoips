@@ -15,7 +15,7 @@
 
 (first-workflow)=
 
-# Quickstart: run your first workflow
+# Quickstart: Run Your First Workflow
 
 This quickstart takes you from a fresh install to a rendered satellite product using
 {ref}`Order-Based Processing <order-based-processing>` (OBP) — the GeoIPS 2.0 way of
