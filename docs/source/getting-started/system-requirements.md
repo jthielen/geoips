@@ -4,12 +4,6 @@ orphan: true
 
 (system-requirements)=
 
-:::{dropdown} Distribution Statement
-
-| # # # This source code is subject to the license referenced at
-| # # # https://github.com/NRLMMD-GEOIPS.
-:::
-
 # System Requirements
 
 GeoIPS system requirements are dependent on how you intend to use

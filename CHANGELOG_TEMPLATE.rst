@@ -1,7 +1,6 @@
-.. dropdown:: Distribution Statement
-
- | # # # This source code is subject to the license referenced at
- | # # # https://github.com/NRLMMD-GEOIPS.
+..
+    This Computer Software is subject to the license referenced at
+    https://github.com/NRLMMD-GEOIPS.
 
 The GeoIPS Ecosystem uses ``brassy`` for automating RST release note generation from
 user-generated YAML release notes.  Every pull request within the GeoIPS GitHub
