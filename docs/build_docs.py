@@ -442,10 +442,12 @@ def copy_template_files_to_non_geoips_repo(geoips_docs_dir, build_dir):
     )
     template_path = os.path.join(build_dir, "_templates")
     os.makedirs(template_path, exist_ok=True)
-    shutil.copy(
-        os.path.join(geoips_docs_dir, "source", "_templates", "geoips_footer.html"),
-        template_path,
-    )
+    templates_to_copy = ("geoips_footer.html", "layout.html")
+    for fname in templates_to_copy:
+        shutil.copy(
+            os.path.join(geoips_docs_dir, "source", "_templates", fname),
+            template_path,
+        )
 
 
 def create_conf_py_from_template(build_dir, geoips_docs_dir, package_name):
@@ -726,9 +728,9 @@ def build_release_notes_with_brassy(
         header_file.write(
             "\n".join(
                 [
-                    ".. dropdown:: Distribution Statement",
-                    "  | This file is auto-generated. Please abide by the license",
-                    f"  | found at {license_url}.",
+                    ".. ",
+                    "    This file is auto-generated. Please abide by the license",
+                    f".   found at {license_url}.",
                 ]
             )
         )

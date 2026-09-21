@@ -81,10 +81,9 @@ def main(index_filename, release_note_path):
     # No other release note name formatting supported.
 
     # Include standard top level headers
-    lines = [".. dropdown:: Distribution Statement\n"]
-    lines += ["\n"]
-    lines += [" | This is an auto-generated file.\n"]
-    lines += [" | Please abide by license packaged with this software.\n"]
+    lines = [".. \n"]
+    lines += ["    This is an auto-generated file.\n"]
+    lines += ["    Please abide by license packaged with this software.\n"]
     lines += ["\n"]
     lines += [".. _release_notes:\n"]
     lines += ["\n"]
