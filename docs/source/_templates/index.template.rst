@@ -31,7 +31,7 @@
 `NRLMMD <https://www.nrlmry.navy.mil/>`__ |
 `CIRA <https://www.cira.colostate.edu/>`__
 
-.. code-block::
+.. code-block:: text
 
     Distribution Statement A. Approved for public release. Distribution is unlimited.
 
