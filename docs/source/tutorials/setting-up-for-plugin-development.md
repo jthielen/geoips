@@ -40,14 +40,16 @@
 5. Update pyproject.toml
 
    Installing a Python package requires metadata that describes the package and how to
-   install it. GeoIPS uses `pyproject.toml` to define this information. We, additionally,
-   make GeoIPS aware of plugin packages using `entry-points`.
+   install it (such as package name, description, license, dependencies, and other
+   configuration and build details). GeoIPS uses `pyproject.toml` to define this
+   information. Additionally, we make GeoIPS aware of plugin packages using
+   `entry-points`.
 
    To update `pyproject.toml` for your package, edit the file to:
 
    * Update `@package@` to your package name.
    * Update `my_package` to your package name.
-   * Add any python package depenencies to the `install_requires` section.
+   * Add any python package depenencies to the `tool.poetry.dependencies` section.
 
 6. Add and commit your changes.
 
@@ -72,19 +74,3 @@
    generally only occurs when you create new class based plugins, and must add them as
    entry-points to `pyproject.toml`. This is further discussed in the
    {ref}`Algorithms Section<add-an-algorithm>`.
-
-## Defining pyproject.toml
-
-Installing Python packages requires metadata that describes the package and how to
-install it.
-
-pyproject.toml defines this information for pip, including:
-    * Package name, version, description, license, etc.
-    * Which files should be contained in the package when installed
-    * How to build the package
-
-We make GeoIPS aware of our package using the "geoips.plugin_packages" namespace
-(allows GeoIPS to find YAML-based plugins)
-
-And makes it aware of our class-based plugins using one namespace per interface
-(e.g. "geoips.algorithms").
