@@ -1,26 +1,124 @@
-Version 1.18.2 (2026-09-17)
+Version 1.18.2 (2026-10-19)
 ***************************
 
- * *Testing*: Add additional information on geoips testing / log output control.
- * *Testing*: Clarify informative log statements.
- * *Testing*: Add product paths to interactive_pytest output
- * *Testing*: Do not wrap console script names during unit tests for geoips expose
  * *Installation*: Allow piped calls to run_command
  * *Installation*: Always set geoips_repo_url to github
  * *Installation*: Disable git prompts by default in config_geoips
  * *Installation*: Add gitall command to fully update all repos to  specified branch, if it exists
  * *Installation*: Allow writing install logs to specified path
- * *Breaking change*: Update handling of sector adjuster output
- * *Refactor*: Update geoips platform name map in viirs_l2_netcdf reader
  * *Realtime*: Add product_spec_override command line support to config-based procflow
  * *Realtime*: Default product_spec_override command line argument to none
+ * *Testing*: Add additional information on geoips testing / log output control.
+ * *Testing*: Clarify informative log statements.
+ * *Testing*: Add product paths to interactive_pytest output
+ * *Testing*: Do not wrap console script names during unit tests for geoips expose
  * *Bug fix*: Use relative imports for boxplots and dataframe_utils in memusg/plot_json_files.py
  * *Bug fix*: Include a better error message if partial zarr geolocation file exists
  * *Bug fix*: Skip undefined sectors in product_database_writer_kwargs
  * *Bug fix*: Update rich console import for build_docs.py
  * *Bug fix*: Decrease length of time for validating bdeck formatting from 2 years to 6 months
+ * *Breaking change*: Update handling of sector adjuster output
+ * *Refactor*: Update geoips platform name map in viirs_l2_netcdf reader
  * *Efficiency*: Add more informative print_mem_usg statements
  * *Efficiency*: Add disable_nan_array_removal argument
+
+Installation
+============
+
+Allow piped calls to run_command
+--------------------------------
+
+If there is a pipe character in the passed command, call with bash -c and set -o pipefail.
+This should not change operation of non-piped commands, and piped commands did not
+previously work at all.
+
+geoips#1029 - 1.18.2 updates
+
+::
+
+     modified: setup/check_system_requirements.sh
+
+Always set geoips_repo_url to github
+------------------------------------
+
+Remove path-based special cases.
+
+geoips#1029 - 1.18.2 updates
+
+::
+
+     modified: setup/config_geoips
+
+Disable git prompts by default in config_geoips
+-----------------------------------------------
+
+GIT_ASKPASS="", SSH_ASKPASS="", GIT_TERMINAL_PROMPT=1
+
+geoips#1029 - 1.18.2 updates
+
+::
+
+     modified: setup/config_geoips
+
+Add gitall command to fully update all repos to  specified branch, if it exists
+-------------------------------------------------------------------------------
+
+If specified branch does not exist, update to latest on default branch.
+End on a command that *should* pass for all repos, and print information at the
+end indicating such, and suggesting a follow on gitall status command to review the
+final status of all repos (ensure the final gitall pull -p is the final output seen
+on all repos, since if that fails, it indicates you have modified files locally,
+so prompt user to check that the gitall pull -p's passed, and to go fix the individual
+repos if any of the gitall pull's failed.)
+
+Additionally, redirect all output from gitall commands to logs for reference.
+
+geoips#1029 - 1.18.2 updates
+
+::
+
+     modified: setup/bash_setup/gitall
+
+Allow writing install logs to specified path
+--------------------------------------------
+
+If $GEOIPS_INSTALL_LOG_BASEDIR is specified, write install logs there rather than
+default $GEOIPS_OUTDIRS/logs/install.
+
+geoips#1029 - 1.18.2 updates
+
+::
+
+     modified: setup/bash_setup/gitall
+
+Realtime
+========
+
+Add product_spec_override command line support to config-based procflow
+-----------------------------------------------------------------------
+
+Initially product_spec_override was only supported in the actual YAML procflow
+config file, and command line product_spec_override argument was not passed
+through as well.
+
+Add product_spec_override support to the update_output_dict_from_command_line_args
+function, to ensure the product_spec_override is included in the final output
+request.
+
+::
+
+     modified: geoips/plugins/modules/procflows/config_based.py
+
+Default product_spec_override command line argument to none
+-----------------------------------------------------------
+
+Don't default product_spec_override to empty dict, default to None.
+Otherwise any procflow config defined product_spec_overrides would be automatically
+replaced with nothing!
+
+::
+
+     modified: geoips/commandline/args.py
 
 Testing
 =======
@@ -93,141 +191,6 @@ geoips#1029 - 1.18.2 updates
      modified: geoips/geoips_utils.py
      modified: tests/unit_tests/commandline/test_expose.py
 
-Installation
-============
-
-Allow piped calls to run_command
---------------------------------
-
-If there is a pipe character in the passed command, call with bash -c and set -o pipefail.
-This should not change operation of non-piped commands, and piped commands did not
-previously work at all.
-
-geoips#1029 - 1.18.2 updates
-
-::
-
-     modified: setup/check_system_requirements.sh
-
-Always set geoips_repo_url to github
-------------------------------------
-
-Remove path-based special cases.
-
-geoips#1029 - 1.18.2 updates
-
-::
-
-     modified: setup/config_geoips
-
-Disable git prompts by default in config_geoips
------------------------------------------------
-
-GIT_ASKPASS="", SSH_ASKPASS="", GIT_TERMINAL_PROMPT=1
-
-geoips#1029 - 1.18.2 updates
-
-::
-
-     modified: setup/config_geoips
-
-Add gitall command to fully update all repos to  specified branch, if it exists
--------------------------------------------------------------------------------
-
-If specified branch does not exist, update to latest on default branch.
-End on a command that *should* pass for all repos, and print information at the
-end indicating such, and suggesting a follow on gitall status command to review the
-final status of all repos (ensure the final gitall pull -p is the final output seen
-on all repos, since if that fails, it indicates you have modified files locally,
-so prompt user to check that the gitall pull -p's passed, and to go fix the individual
-repos if any of the gitall pull's failed.)
-
-Additionally, redirect all output from gitall commands to logs for reference.
-
-geoips#1029 - 1.18.2 updates
-
-::
-
-     modified: setup/bash_setup/gitall
-
-Allow writing install logs to specified path
---------------------------------------------
-
-If $GEOIPS_INSTALL_LOG_BASEDIR is specified, write install logs there rather than
-default $GEOIPS_OUTDIRS/logs/install.
-
-geoips#1029 - 1.18.2 updates
-
-::
-
-     modified: setup/bash_setup/gitall
-
-Breaking change
-===============
-
-Update handling of sector adjuster output
------------------------------------------
-
-The recenter_tc sector adjuster was updated to return a list of meta dicts instead of a
-list of output file names. The dictionaries contain a key named "sect_adj_output_file",
-which is the full file path for any products produced by recenter_tc (i.e. ARCHER).
-Need to update config_based and single_source procflows to handle this update.
-
-The updated output also enables the ability to write sector_adjuster products to the product
-database. The required hooks were added to the config_based procflow, but not single_source.
-The single_source procflow was updated to include the list of sector_adjuster products
-to the final list of products shown at the end of the log.
-
-geoips#1047
-
-::
-
-     modified: geoips/plugins/modules/procflows/config_based.py
-     modified: geoips/plugins/modules/procflows/single_source.py
-
-Refactor
-========
-
-Update geoips platform name map in viirs_l2_netcdf reader
----------------------------------------------------------
-
-Add support for JP2VIIRS (n21), and change name for JPSS/JP1VIIRS from noaa20 to n20
-
-geoips#1049
-
-::
-
-     modified: geoips/plugins/modules/readers/viirs_l2_netcdf.py
-
-Realtime
-========
-
-Add product_spec_override command line support to config-based procflow
------------------------------------------------------------------------
-
-Initially product_spec_override was only supported in the actual YAML procflow
-config file, and command line product_spec_override argument was not passed
-through as well.
-
-Add product_spec_override support to the update_output_dict_from_command_line_args
-function, to ensure the product_spec_override is included in the final output
-request.
-
-::
-
-     modified: geoips/plugins/modules/procflows/config_based.py
-
-Default product_spec_override command line argument to none
------------------------------------------------------------
-
-Don't default product_spec_override to empty dict, default to None.
-Otherwise any procflow config defined product_spec_overrides would be automatically
-replaced with nothing!
-
-::
-
-     modified: geoips/commandline/args.py
-
 Bug fix
 =======
 
@@ -293,6 +256,43 @@ geoips#1029 - 1.18.2 updates
 ::
 
      modified: geoips/plugins/modules/sector_metadata_generators/bdeck_parser.py
+
+Breaking change
+===============
+
+Update handling of sector adjuster output
+-----------------------------------------
+
+The recenter_tc sector adjuster was updated to return a list of meta dicts instead of a
+list of output file names. The dictionaries contain a key named "sect_adj_output_file",
+which is the full file path for any products produced by recenter_tc (i.e. ARCHER).
+Need to update config_based and single_source procflows to handle this update.
+
+The updated output also enables the ability to write sector_adjuster products to the product
+database. The required hooks were added to the config_based procflow, but not single_source.
+The single_source procflow was updated to include the list of sector_adjuster products
+to the final list of products shown at the end of the log.
+
+geoips#1047
+
+::
+
+     modified: geoips/plugins/modules/procflows/config_based.py
+     modified: geoips/plugins/modules/procflows/single_source.py
+
+Refactor
+========
+
+Update geoips platform name map in viirs_l2_netcdf reader
+---------------------------------------------------------
+
+Add support for JP2VIIRS (n21), and change name for JPSS/JP1VIIRS from noaa20 to n20
+
+geoips#1049
+
+::
+
+     modified: geoips/plugins/modules/readers/viirs_l2_netcdf.py
 
 Efficiency
 ==========

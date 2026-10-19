@@ -1,18 +1,37 @@
-Version 1.19.0 (2026-09-17)
+Version 1.19.0 (2026-10-19)
 ***************************
 
+ * *Bug fix*: Do not pad xarray datasets in config_based procflow when the output format plugin family is "xarray_data"
+   and the area_definition is "self_registered"
  * *Bug fixes*: Fix time in text winds output formatter
+ * *Bug fixes*: Fix time in smap reader due to xarray version change.
  * *Bug fixes*: Add patch release note templates
  * *Bug fixes*: Fix broken jsonschema resolution specification to allow number not just int.
- * *Bug fixes*: Fix time in smap reader due to xarray version change.
- * *Documentation*: Add release note for version 1.19.0
- * *Documentation*: Update tagged versions
- * *Installation*: Add clavr-x orb executable install to site install.
  * *Release process*: Add 1.19.0 release note
  * *Release process*: Update internal and github.com 'tagged_version'
  * *Testing*: Remove full_setup and site_setup from integration test script
- * *Bug fix*: Do not pad xarray datasets in config_based procflow when the output format plugin family is "xarray_data"
-   and the area_definition is "self_registered"
+ * *Installation*: Add clavr-x orb executable install to site install.
+ * *Documentation*: Add release note for version 1.19.0
+ * *Documentation*: Update tagged versions
+
+Bug fix
+=======
+
+Do not pad xarray datasets in config_based procflow when the output format plugin family is "xarray_data" and the
+area_definition is "self_registered"
+------------------------------------
+
+Check that the area_def is not "self_registered" before padding dataset in config_based procflow.
+Padding (resectoring) an xarray_dataset will not work if the area_definition is self_registered.
+Attempting to pad an xarray_dataset that is self_registered will result in an AttributeError,
+since we will have a SwathDefinition on our hands and not an AreaDefinition. SwathDefinitions
+do not have the 'get_array_indices_from_lonlat' attribute.
+
+geoips#1070
+
+::
+
+     modified: geoips/plugins/modules/procflows/config_based.py
 
 Bug fixes
 =========
@@ -34,6 +53,21 @@ geoips#1067 - 1.19.0 updates
 
      modified: geoips/plugins/classes/output_checkers/text.py
      modified: geoips/plugins/modules/output_formatters/text_winds.py
+
+Fix time in smap reader due to xarray version change.
+-----------------------------------------------------
+
+xarray 2026.2.0 stored timestamps internally as ns, and it appears by default in
+2026.4.0 timestamps were being stored internally as ms.  No longer decode times
+in xarray.open_dataset, and manually convert times using pandas to ensure proper
+values.  Tested with both 2026.2.0 and 2026.4.0.
+
+geoips#1067 - 1.19.0 updates
+
+::
+
+     modified: geoips/plugins/modules/readers/smap_remss_winds_netcdf.py
+     modified: geoips/plugins/modules/readers/utils/remss_reader.py
 
 Add patch release note templates
 --------------------------------
@@ -63,68 +97,6 @@ geoips#1067 - 1.19.0 updates*
 ::
 
      modified: geoips/schema/sectors/specs/area_definition.yaml
-
-Fix time in smap reader due to xarray version change.
------------------------------------------------------
-
-xarray 2026.2.0 stored timestamps internally as ns, and it appears by default in
-2026.4.0 timestamps were being stored internally as ms.  No longer decode times
-in xarray.open_dataset, and manually convert times using pandas to ensure proper
-values.  Tested with both 2026.2.0 and 2026.4.0.
-
-geoips#1067 - 1.19.0 updates
-
-::
-
-     modified: geoips/plugins/modules/readers/smap_remss_winds_netcdf.py
-     modified: geoips/plugins/modules/readers/utils/remss_reader.py
-
-Documentation
-=============
-
-Add release note for version 1.19.0
------------------------------------
-
-Release note on release branch to force tag/release, package/publish,
-and deploy docs.
-
-Additionally add any updated files from geoips_ci/sync
-
-geoips#1067 - 1.19.0 updates
-
-::
-
-     added: docs/source/releases/latest/1.19.0-release-note.yaml
-     modified: geoips_ci/sync updated files
-
-Update tagged versions
-----------------------
-
-* Tagged version: 1.19.0
-
-geoips#1067 - 1.19.0 updates
-
-::
-
-     modified: .github/versions/tagged_version
-
-Installation
-============
-
-Add clavr-x orb executable install to site install.
----------------------------------------------------
-
-Ensure clavrx executable is installed during GeoIPS open source site install, since
-the clavrx proc test scripts require the clavrx executable.
-
-Also add pluginify to site_install.sh to ensure it is cloned locally and installed
-editable for development purposes.
-
-geoips#1067 - 1.19.0 updates
-
-::
-
-     modified: tests/integration_tests/site_install.sh
 
 Release process
 ===============
@@ -173,21 +145,49 @@ geoips#1067 - 1.19.0 updates
 
      modified: tests/integration_tests/test_integration.py
 
-Bug fix
-=======
+Installation
+============
 
-Do not pad xarray datasets in config_based procflow when the output format plugin family is "xarray_data" and the
-area_definition is "self_registered"
-------------------------------------
+Add clavr-x orb executable install to site install.
+---------------------------------------------------
 
-Check that the area_def is not "self_registered" before padding dataset in config_based procflow.
-Padding (resectoring) an xarray_dataset will not work if the area_definition is self_registered.
-Attempting to pad an xarray_dataset that is self_registered will result in an AttributeError,
-since we will have a SwathDefinition on our hands and not an AreaDefinition. SwathDefinitions
-do not have the 'get_array_indices_from_lonlat' attribute.
+Ensure clavrx executable is installed during GeoIPS open source site install, since
+the clavrx proc test scripts require the clavrx executable.
 
-geoips#1070
+Also add pluginify to site_install.sh to ensure it is cloned locally and installed
+editable for development purposes.
+
+geoips#1067 - 1.19.0 updates
 
 ::
 
-     modified: geoips/plugins/modules/procflows/config_based.py
+     modified: tests/integration_tests/site_install.sh
+
+Documentation
+=============
+
+Add release note for version 1.19.0
+-----------------------------------
+
+Release note on release branch to force tag/release, package/publish,
+and deploy docs.
+
+Additionally add any updated files from geoips_ci/sync
+
+geoips#1067 - 1.19.0 updates
+
+::
+
+     added: docs/source/releases/latest/1.19.0-release-note.yaml
+     modified: geoips_ci/sync updated files
+
+Update tagged versions
+----------------------
+
+* Tagged version: 1.19.0
+
+geoips#1067 - 1.19.0 updates
+
+::
+
+     modified: .github/versions/tagged_version

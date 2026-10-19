@@ -1,7 +1,6 @@
-.. dropdown:: Distribution Statement
-
- | This is an auto-generated file.
- | Please abide by license packaged with this software.
+.. 
+    This is an auto-generated file.
+    Please abide by license packaged with this software.
 
 .. _release_notes:
 

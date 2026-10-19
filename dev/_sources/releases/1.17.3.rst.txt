@@ -1,14 +1,12 @@
-Version 1.17.3 (2026-09-17)
+Version 1.17.3 (2026-10-19)
 ***************************
 
+ * *Bug fix*: Bug fix in setting ahi_hsd metadata
  * *Bug fix*: Removed astropy usage in readers.
  * *Bug fix*: Properly filter ingested tles using a satellite prediction list
- * *Bug fix*: Put the delimiter back in the tc invest file name paths
- * *Bug fix*: Minor bug fixes to overpass_predictor and tc_tracks_database
- * *Bug fix*: Bug fix in setting ahi_hsd metadata
- * *Bug fix*: Link to persistent_data_dirs ancildat and test_data paths, remove astropy dependency
- * *Bug fix*: Add gdal to nrl_install.rst
  * *Bug fix*: Move dynamic geolocation and ancildat_autogen caches to shortterm location
+ * *Bug fix*: Put the delimiter back in the tc invest file name paths
+ * *Bug fix*: Do not include requirements in pip requirements files for archival purposes
  * *Bug fix*: Add archer_fdeck to metadata_default.py output formatter
  * *Bug fix*: Update metadata_tc output formatter to include area_id and area_description fields
  * *Bug fix*: Update aws tc165/180/325-1, amsr2 ocean, and sar tests to include metadata output for invest and numbered
@@ -31,16 +29,28 @@ Version 1.17.3 (2026-09-17)
  * *Bug fix*: Remove support for file_path_modifications
  * *Bug fix*: Fix build_docs errors
  * *Bug fix*: Allow 28 field bdeck lines in bdeck_parser.
- * *Bug fix*: Do not include requirements in pip requirements files for archival purposes
+ * *Bug fix*: Link to persistent_data_dirs ancildat and test_data paths, remove astropy dependency
+ * *Bug fix*: Add gdal to nrl_install.rst
+ * *Bug fix*: Minor bug fixes to overpass_predictor and tc_tracks_database
+ * *Documentation*: Add release note for version 1.17.3
+ * *Documentation*: Update upcoming and tagged versions
  * *Testing*: Meteosat 10 & 12 terminator tiny test sectors
  * *Testing*: Update tiny sector test scripts to copy both global dataset images, and tiny sector images to
    example_test_imagery_output
  * *Testing*: Update tiny sector test script to produce annotated tiny sector image outputs on request
- * *Documentation*: Add release note for version 1.17.3
- * *Documentation*: Update upcoming and tagged versions
 
 Bug fix
 =======
+
+Bug fix in setting ahi_hsd metadata
+-----------------------------------
+
+Need to slice first dimension of array returned from numpy.frombuffer when storing
+the 'scan_shift_amount' and 'ob_time_line_number'
+
+::
+
+     modified: geoips/plugins/modules/readers/ahi_hsd.py
 
 Removed astropy usage in readers.
 ---------------------------------
@@ -89,71 +99,6 @@ names allows us to check if "EOS-6" OR "OCEANSAT-3" are in the satellite_names_l
 
      modified: geoips/sector_utils/overpass_predictor.py
 
-Put the delimiter back in the tc invest file name paths
--------------------------------------------------------
-
-When updating the TC file naming conventions to use storm_id rather than
-manually compiling the path, it resulted in removing the delimiter from the
-TC invest file paths. This update restores the delimiter to ensure proper
-formatting of TC invest file names for consistency, clarity, and backwards
-compatibility.
-
-::
-
-     modified: geoips/plugins/modules/filename_formatters/utils/tc_file_naming.py
-     modified:
-     tests/outputs/aws.tc.TB165.imagery_clean/20250428_114913_WP992025_mwr_aws_TB165_15kts_43p06_1p0-clean.png.yaml
-     modified:
-     tests/outputs/aws.tc.TB180.imagery_clean/20250428_114913_WP992025_mwr_aws_TB180_15kts_43p06_1p0-clean.png.yaml
-     modified:
-     tests/outputs/aws.tc.TB325-1.imagery_clean/20250428_114913_WP992025_mwr_aws_TB325-1_15kts_48p36_1p0-clean.png.yaml
-
-Minor bug fixes to overpass_predictor and tc_tracks_database
-------------------------------------------------------------
-
-* Use area_def.sector_info["storm_id"] instead of area_def.area_id in the overpass
-  predictor, which does not include the storm_start_datetime.
-* Support parsing database timstamps that include a ".%f" field.
-
-::
-
-     modified: geoips/sector_utils/overpass_predictor.py
-     modified: geoips/sector_utils/tc_tracks_database.py
-
-Bug fix in setting ahi_hsd metadata
------------------------------------
-
-Need to slice first dimension of array returned from numpy.frombuffer when storing
-the 'scan_shift_amount' and 'ob_time_line_number'
-
-::
-
-     modified: geoips/plugins/modules/readers/ahi_hsd.py
-
-Link to persistent_data_dirs ancildat and test_data paths, remove astropy dependency
-------------------------------------------------------------------------------------
-
-Make astropy imports optional in atms_hdf5 and scat_noaa_winds_netcdf readers. Readers
-will not be functional until astropy is replaced, but will allow us to install geoips
-under a clean build.
-
-::
-
-     modified: docs/source/getting-started/installing/nrl_install.rst
-     modified: geoips/plugins/modules/readers/atms_hdf5.py
-     modified: geoips/plugins/modules/readers/scat_noaa_winds_netcdf.py
-     modified: pyproject.toml
-
-Add gdal to nrl_install.rst
----------------------------
-
-* Add gdal to nrl_install.rst.
-* Note reo-cogeo may be required, but we've had mixed results so far.
-
-::
-
-     modified: docs/source/getting-started/installing/nrl_install.rst
-
 Move dynamic geolocation and ancildat_autogen caches to shortterm location
 --------------------------------------------------------------------------
 
@@ -184,6 +129,41 @@ so scrubbing must be handled appropriately to avoid deleting data that is still 
      modified: geoips/filenames/base_paths.py
      modified: geoips/plugins/modules/readers/utils/geostationary_geolocation.py
      modified: setup/config_geoips
+
+Put the delimiter back in the tc invest file name paths
+-------------------------------------------------------
+
+When updating the TC file naming conventions to use storm_id rather than
+manually compiling the path, it resulted in removing the delimiter from the
+TC invest file paths. This update restores the delimiter to ensure proper
+formatting of TC invest file names for consistency, clarity, and backwards
+compatibility.
+
+::
+
+     modified: geoips/plugins/modules/filename_formatters/utils/tc_file_naming.py
+     modified:
+     tests/outputs/aws.tc.TB165.imagery_clean/20250428_114913_WP992025_mwr_aws_TB165_15kts_43p06_1p0-clean.png.yaml
+     modified:
+     tests/outputs/aws.tc.TB180.imagery_clean/20250428_114913_WP992025_mwr_aws_TB180_15kts_43p06_1p0-clean.png.yaml
+     modified:
+     tests/outputs/aws.tc.TB325-1.imagery_clean/20250428_114913_WP992025_mwr_aws_TB325-1_15kts_48p36_1p0-clean.png.yaml
+
+Do not include requirements in pip requirements files for archival purposes
+---------------------------------------------------------------------------
+
+Clean up environment file directory. Ensure old pip requirements files are not
+identified as valid current requirements files - we only want to keep them for
+archival purposes, and not actually use them.
+
+Also, always copy to requirements_envtag.txt in create_environment_files so
+we are tracking the most recent versions of everything for various installation
+methods.
+
+::
+
+     modified: environments/all files
+     modified: setup/check_system_requirements.sh
 
 Add archer_fdeck to metadata_default.py output formatter
 --------------------------------------------------------
@@ -458,21 +438,72 @@ unknown if not defined in line
 
      modified: geoips/plugins/modules/sector_metadata_generators/bdeck_parser.py
 
-Do not include requirements in pip requirements files for archival purposes
----------------------------------------------------------------------------
+Link to persistent_data_dirs ancildat and test_data paths, remove astropy dependency
+------------------------------------------------------------------------------------
 
-Clean up environment file directory. Ensure old pip requirements files are not
-identified as valid current requirements files - we only want to keep them for
-archival purposes, and not actually use them.
-
-Also, always copy to requirements_envtag.txt in create_environment_files so
-we are tracking the most recent versions of everything for various installation
-methods.
+Make astropy imports optional in atms_hdf5 and scat_noaa_winds_netcdf readers. Readers
+will not be functional until astropy is replaced, but will allow us to install geoips
+under a clean build.
 
 ::
 
-     modified: environments/all files
-     modified: setup/check_system_requirements.sh
+     modified: docs/source/getting-started/installing/nrl_install.rst
+     modified: geoips/plugins/modules/readers/atms_hdf5.py
+     modified: geoips/plugins/modules/readers/scat_noaa_winds_netcdf.py
+     modified: pyproject.toml
+
+Add gdal to nrl_install.rst
+---------------------------
+
+* Add gdal to nrl_install.rst.
+* Note reo-cogeo may be required, but we've had mixed results so far.
+
+::
+
+     modified: docs/source/getting-started/installing/nrl_install.rst
+
+Minor bug fixes to overpass_predictor and tc_tracks_database
+------------------------------------------------------------
+
+* Use area_def.sector_info["storm_id"] instead of area_def.area_id in the overpass
+  predictor, which does not include the storm_start_datetime.
+* Support parsing database timstamps that include a ".%f" field.
+
+::
+
+     modified: geoips/sector_utils/overpass_predictor.py
+     modified: geoips/sector_utils/tc_tracks_database.py
+
+Documentation
+=============
+
+Add release note for version 1.17.3
+-----------------------------------
+
+Release note on release branch to force tag/release, package/publish,
+and deploy docs.
+
+Additionally add any updated files from geoips_ci/sync
+
+geoips#1029 - 1.17.3 updates
+
+::
+
+     added: docs/source/releases/latest/1.17.3-release-note.yaml
+     modified: geoips_ci/sync updated files
+
+Update upcoming and tagged versions
+-----------------------------------
+
+* Tagged version: 1.17.3
+* Upcoming version: 1.18.1
+
+geoips#1029 - 1.17.3 updates
+
+::
+
+     modified: .github/versions/tagged_version
+     modified: .github/versions/upcoming_version
 
 Testing
 =======
@@ -540,34 +571,3 @@ geoips#1004
 
      modified: geoips/plugins/modules/filename_formatters/geoips_fname.py
      modified: tests/integration_tests/tiny_sectors/tiny_sectors_geostationary.sh
-
-Documentation
-=============
-
-Add release note for version 1.17.3
------------------------------------
-
-Release note on release branch to force tag/release, package/publish,
-and deploy docs.
-
-Additionally add any updated files from geoips_ci/sync
-
-geoips#1029 - 1.17.3 updates
-
-::
-
-     added: docs/source/releases/latest/1.17.3-release-note.yaml
-     modified: geoips_ci/sync updated files
-
-Update upcoming and tagged versions
------------------------------------
-
-* Tagged version: 1.17.3
-* Upcoming version: 1.18.1
-
-geoips#1029 - 1.17.3 updates
-
-::
-
-     modified: .github/versions/tagged_version
-     modified: .github/versions/upcoming_version

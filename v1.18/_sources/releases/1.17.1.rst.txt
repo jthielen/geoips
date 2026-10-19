@@ -1,12 +1,27 @@
-Version 1.17.1 (2026-09-17)
+Version 1.17.1 (2026-10-19)
 ***************************
 
+ * *Bug fix*: Minor bugfixes for readers and algorithms
  * *Bug fixes*: Bug fixes on 1.17.1
- * *Release updates*: Bug fixes on the open source github.com geoips site integration tests.
- * *Release updates*: Geoips repo - update tagged_version and upcoming_version
  * *Documentation*: Add release note for version 1.17.1
  * *Documentation*: Update upcoming and tagged versions
- * *Bug fix*: Minor bugfixes for readers and algorithms
+ * *Release updates*: Bug fixes on the open source github.com geoips site integration tests.
+ * *Release updates*: Geoips repo - update tagged_version and upcoming_version
+
+Bug fix
+=======
+
+Minor bugfixes for readers and algorithms
+-----------------------------------------
+
+Fixes for the amsr2_netcdf reader to read multiple files. Modified the HNCC algorithm to better capture TC imagery.
+Added a static sector for Kazakhstan.
+
+::
+
+     added: geoips/plugins/yaml/sectors/static/kazakh.yaml
+     modified: geoips/plugins/modules/readers/amsr2_netcdf.py
+     modified: geoips/plugins/modules/algorithms/visir/HNear_Constant_Contrast.py
 
 Bug fixes
 =========
@@ -214,34 +229,6 @@ geoips#959 - 1.17.0 updates*
      deleted: deleted old tiny sector name:
      tests/outputs/abi.static.Visible.imagery_clean/20200918.195020.goes-16.abi.Visible.test_goes16_eqc_3km_terminator_20200918T1950Z.79p46.noaa.3p0.png
 
-Release updates
-===============
-
-Bug fixes on the open source github.com geoips site integration tests.
-----------------------------------------------------------------------
-
-Bug fixes required to get the GeoIPS Site integration tests to pass on all available
-github.com open source repositories.
-
-Also update standard sync files
-
-::
-
-     modified: docs/source/releases/
-
-Geoips repo - update tagged_version and upcoming_version
---------------------------------------------------------
-
-tagged_version 1.17.1 (site-nrlmmd bug fixes)
-upcoming_version 1.17.2 (system bug fixes)
-
-geoips#959 - 1.17.0 updates*
-
-::
-
-     modified: .github/versions/upcoming_version
-     modified: .github/versions/tagged_version
-
 Documentation
 =============
 
@@ -273,17 +260,30 @@ geoips#959 - 1.17.1 updates
      modified: .github/versions/tagged_version
      modified: .github/versions/upcoming_version
 
-Bug fix
-=======
+Release updates
+===============
 
-Minor bugfixes for readers and algorithms
------------------------------------------
+Bug fixes on the open source github.com geoips site integration tests.
+----------------------------------------------------------------------
 
-Fixes for the amsr2_netcdf reader to read multiple files. Modified the HNCC algorithm to better capture TC imagery.
-Added a static sector for Kazakhstan.
+Bug fixes required to get the GeoIPS Site integration tests to pass on all available
+github.com open source repositories.
+
+Also update standard sync files
 
 ::
 
-     added: geoips/plugins/yaml/sectors/static/kazakh.yaml
-     modified: geoips/plugins/modules/readers/amsr2_netcdf.py
-     modified: geoips/plugins/modules/algorithms/visir/HNear_Constant_Contrast.py
+     modified: docs/source/releases/
+
+Geoips repo - update tagged_version and upcoming_version
+--------------------------------------------------------
+
+tagged_version 1.17.1 (site-nrlmmd bug fixes)
+upcoming_version 1.17.2 (system bug fixes)
+
+geoips#959 - 1.17.0 updates*
+
+::
+
+     modified: .github/versions/upcoming_version
+     modified: .github/versions/tagged_version
