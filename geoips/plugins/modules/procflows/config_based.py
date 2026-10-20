@@ -9,13 +9,13 @@ from glob import glob
 from os.path import exists
 from os.path import basename
 from os import getpid
-from datetime import datetime
 from geoips_yaml_utils import parse_config
 
 from geoips.commandline.args import check_command_line_args
 from geoips.errors import PluginError
 from geoips.filenames.base_paths import PATHS as gpaths
 from geoips.utils.memusg.memusg_tracker import PidLog
+from geoips.utils.datetime import utcnow_naive
 
 from geoips.geoips_utils import output_process_times
 from geoips.dev.product import (
@@ -838,7 +838,7 @@ def call(fnames, command_line_args=None):
     LOG.interactive("GEOIPS_VERSION {}".format(geoips_version))
 
     process_datetimes = {}
-    process_datetimes["overall_start"] = datetime.utcnow()
+    process_datetimes["overall_start"] = utcnow_naive()
     final_products = {}
     removed_products = []
     saved_products = []
@@ -1309,7 +1309,7 @@ def call(fnames, command_line_args=None):
             # from a single. Sector to pad_area_def so we have enough data for
             # recentering.
             process_datetimes[area_def.area_id] = {}
-            process_datetimes[area_def.area_id]["start"] = datetime.utcnow()
+            process_datetimes[area_def.area_id]["start"] = utcnow_naive()
 
             # Make sure we grab some around the required data.
             # Do NOT sector if we are using a reader_defined or self_register area_def -
@@ -2194,7 +2194,7 @@ def call(fnames, command_line_args=None):
                         removed_products += curr_removed_products
                         saved_products += curr_saved_products
 
-                    process_datetimes[area_def.area_id]["end"] = datetime.utcnow()
+                    process_datetimes[area_def.area_id]["end"] = utcnow_naive()
                     num_jobs += 1
                     pid_track.track_resource_usage(
                         logstr="MEMUSG",
@@ -2216,7 +2216,7 @@ def call(fnames, command_line_args=None):
         )
 
     pid_track.print_mem_usg(logstr="MEMUSG", verbose=False)
-    process_datetimes["overall_end"] = datetime.utcnow()
+    process_datetimes["overall_end"] = utcnow_naive()
 
     LOG.interactive("\n\n\nProcessing complete! Checking outputs...\n\n\n")
 

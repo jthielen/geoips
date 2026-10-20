@@ -24,6 +24,7 @@ import pandas as pd
 from geoips.filenames.base_paths import PATHS as gpaths
 
 from geoips.utils.context_managers import import_optional_dependencies
+from geoips.utils.datetime import utcnow_naive
 
 LOG = logging.getLogger(__name__)
 
@@ -174,7 +175,7 @@ class PidLog:
                     # pid expired quickly, need to remove invalid values
                     continue
 
-            dtime = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+            dtime = utcnow_naive().strftime("%Y%m%d_%H%M%S_%f")
             self.usage_dict["overall"]["cpu_percent"].append(cpu_per)
             if platform.system() == "Linux":
                 self.usage_dict["overall"]["cpu_count"].append(len(set(tmp_cpu)))

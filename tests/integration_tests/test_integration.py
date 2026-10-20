@@ -18,6 +18,7 @@ import pytest
 
 from geoips.filenames.base_paths import PATHS as gpaths
 from geoips.geoips_utils import call_cmd
+from geoips.utils.datetime import utcnow_naive
 
 tmpdir = tempfile.mkdtemp()
 
@@ -219,7 +220,7 @@ def set_log_filename(expanded_call):
         if "/" in curr_arg:
             curr_arg = os.path.basename(curr_arg)
         args_str = f"{args_str}_{curr_arg}".replace("*", "-")
-    curr_datetime = datetime.utcnow().strftime("%Y%m%d.%H%M%S")
+    curr_datetime = utcnow_naive().strftime("%Y%m%d.%H%M%S")
     basename_str = os.path.basename(script_name)
     log_fname = f"{os.environ['GEOIPS_OUTDIRS']}/logs/pytests/integration"
     log_fname = f"{log_fname}/{curr_datetime}.{basename_str}{args_str}.log"

@@ -217,9 +217,9 @@ def save_image(
 
     LOG.info("IMAGESUCCESS wrote %s", out_fname)
     if image_datetime is not None:
-        from datetime import datetime
+        from geoips.utils.datetime import utcnow_naive
 
-        LOG.info("LATENCY %s %s", datetime.utcnow() - image_datetime, out_fname)
+        LOG.info("LATENCY %s %s", utcnow_naive() - image_datetime, out_fname)
     return [out_fname]
 
 
