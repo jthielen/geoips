@@ -1,8 +1,9 @@
 # Test-only dependency overrides, keyed by branch: only the entry of the branch under
 # test applies (see "Testing against other branches or versions" in the geoips_ci README).
 #
-# TODO before merging #1510: remove this entry once the PRs below are merged.
-biosafetylvl5-better-errors-from-docker-apt:
+# TODO: remove sub-entries below once the respective PRs are merged; remove full entry
+# once all complete or after #1488 is merged.
+"jthielen:docs-deployment-updates":
   python:
     # Atomic registry writes (fixes JSONDecodeError races under pytest-xdist).
     # NRLMMD-GEOIPS/pluginify#37
