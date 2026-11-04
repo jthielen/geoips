@@ -418,7 +418,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0" />
-    <meta name="docbuild:last-update" content="Oct 19, 2026 21:10:23"/>
+    <meta name="docbuild:last-update" content="Nov 04, 2026 22:25:14"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -875,7 +875,6 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">basename</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -893,6 +892,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">check_geolocation_cache_backend</span><span class="p">,</span>
     <span class="n">get_geolocation_cache_filename</span><span class="p">,</span>
     <span class="n">AutoGenError</span><span class="p">,</span>
+    <span class="n">DONT_AUTOGEN_GEOLOCATION</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -978,6 +978,10 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="BaseAbiReaderPlugin"><a class="viewcode-back" href="../../../../geoips_api/geoips.interfaces.class_based.html#geoips.interfaces.class_based.readers.BaseAbiReaderPlugin">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BaseAbiReaderPlugin</span><span class="p">(</span><span class="n">BaseReaderPlugin</span><span class="p">,</span> <span class="n">abstract</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base class for ABI-based readers."""</span>
+
+    <span class="c1"># get_latitude_longitude reads this. Set from the DONT_AUTOGEN_GEOLOCATION</span>
+    <span class="c1"># environment variable, readers may override it.</span>
+    <span class="n">DONT_AUTOGEN_GEOLOCATION</span> <span class="o">=</span> <span class="n">DONT_AUTOGEN_GEOLOCATION</span>
 
     <span class="c1"># These should be added to the data file object</span>
     <span class="n">BADVALS</span> <span class="o">=</span> <span class="p">{</span>
@@ -1459,6 +1463,8 @@ window.runMermaid = runMermaid;</script>
         <span class="c1"># all files provided.</span>
         <span class="n">all_file_metadata</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">updated_fnames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># (filename, exception) pairs for every file excluded from processing</span>
+        <span class="n">skipped_files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fnames</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">all_file_metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -1469,40 +1475,50 @@ window.runMermaid = runMermaid;</script>
                     <span class="p">)[</span><span class="s2">"METADATA"</span><span class="p">]</span>
                 <span class="p">)</span>
                 <span class="n">updated_fnames</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
-            <span class="k">except</span> <span class="n">NoValidFilesError</span><span class="p">:</span>
+            <span class="k">except</span> <span class="n">NoValidFilesError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="c1"># If the current file is not valid, just skip this one.</span>
-                <span class="c1"># print(f"{str(e)}: No files found, skipping")</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">"Skipping invalid file </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span>
+                <span class="p">)</span>
+                <span class="n">skipped_files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
                 <span class="k">continue</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">HritError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="c1"># Value error is raised for 'inconsistent' metadata, or in this case</span>
                 <span class="c1"># No appropriate file for the channels selected</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">HritError</span><span class="p">)</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">start_datetime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># This occurs from the seviri_hrit reader in</span>
+                    <span class="c1"># 'get_top_level_metadata' when the file is missing 'block_2' or</span>
+                    <span class="c1"># its projection is not GEOS. The file could still be relevant,</span>
+                    <span class="c1"># so use the start and end datetimes attached to the error.</span>
+                    <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">"File </span><span class="si">%s</span><span class="s2"> raised a recoverable error, still using its "</span>
+                        <span class="s2">"start/end datetimes: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                        <span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">st</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">start_datetime</span>
+                    <span class="n">et</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">end_datetime</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">"Excluding file </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span>
+                    <span class="p">)</span>
+                    <span class="n">skipped_files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
                     <span class="n">st</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="n">et</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">else</span><span class="p">:</span>
-<span class="w">                    </span><span class="sd">"""</span>
-<span class="sd">                    This occurs from the seviri_hrit reader in 'get_top_level_metadata'</span>
-<span class="sd">                    Parse out the start and end datetimes, as this file still could be</span>
-<span class="sd">                    Relevant, but is missing 'block_2'. If the set of files all are</span>
-<span class="sd">                    missing block_2, or the projection of block_2 is not GEOS, it will</span>
-<span class="sd">                    cause an HritError in the for loop before, which doesn't have a try</span>
-<span class="sd">                    except statement.</span>
-
-<span class="sd">                    Error Format:</span>
-<span class="sd">                    f"Unknown projection encountered: {projection}.\n"</span>
-<span class="sd">                    f"start_datetime={st.isoformat()}\n"</span>
-<span class="sd">                    f"end_datetime={et.isoformat()}"</span>
-<span class="sd">                    """</span>
-                    <span class="n">emsg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-                    <span class="c1"># Recreate the datetime objects from the isoformat strings provided</span>
-                    <span class="n">st</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">emsg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-                    <span class="n">et</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">emsg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="c1"># Add st, et as datetimes for the file, nonetheless if they are None</span>
-                <span class="c1"># or a valid datetime</span>
+                <span class="c1"># or a valid datetime. updated_fnames and all_file_metadata must stay</span>
+                <span class="c1"># index-aligned, since start_times is used to mask updated_fnames.</span>
                 <span class="n">all_file_metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">Dataset</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">st</span><span class="p">,</span> <span class="n">end_datetime</span><span class="o">=</span><span class="n">et</span><span class="p">))</span>
                 <span class="p">)</span>
                 <span class="n">updated_fnames</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">skipped_files</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"Excluded </span><span class="si">%s</span><span class="s2"> of </span><span class="si">%s</span><span class="s2"> files provided to the reader. "</span>
+                <span class="s2">"See warning and error log messages for per-file reasons."</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">skipped_files</span><span class="p">),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">fnames</span><span class="p">),</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_times</span> <span class="o">=</span> <span class="p">[</span><span class="n">md</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">"start_datetime"</span><span class="p">]</span> <span class="k">for</span> <span class="n">md</span> <span class="ow">in</span> <span class="n">all_file_metadata</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">end_times</span> <span class="o">=</span> <span class="p">[</span><span class="n">md</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">"end_datetime"</span><span class="p">]</span> <span class="k">for</span> <span class="n">md</span> <span class="ow">in</span> <span class="n">all_file_metadata</span><span class="p">]</span>
 
@@ -1521,6 +1537,7 @@ window.runMermaid = runMermaid;</script>
                 <span class="sa">f</span><span class="s2">"No valid files found out of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fnames</span><span class="p">)</span><span class="si">}</span><span class="s2"> provided. "</span>
                 <span class="sa">f</span><span class="s2">"Requested channels: </span><span class="si">{</span><span class="n">chans</span><span class="si">}</span><span class="s2">. "</span>
                 <span class="s2">"Ensure files and channels match the reader's expectations."</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_summarize_skipped_files</span><span class="p">(</span><span class="n">skipped_files</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="c1"># Set these values to this class so they can be used downstream for reading</span>
         <span class="c1"># data from the correct time steps</span>
@@ -1551,6 +1568,34 @@ window.runMermaid = runMermaid;</script>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">dict_xarrays</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_summarize_skipped_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skipped_files</span><span class="p">,</span> <span class="n">max_listed</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Build a short summary of files excluded while reading metadata.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        skipped_files : list of tuple</span>
+<span class="sd">            * (filename, exception) pairs for each excluded file.</span>
+<span class="sd">        max_listed : int, default=5</span>
+<span class="sd">            * Maximum number of files to list individually. Any remaining files are</span>
+<span class="sd">              reported as a count.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            * Summary suitable for appending to an error message, or an empty</span>
+<span class="sd">              string if no files were skipped.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skipped_files</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">for</span> <span class="n">fname</span><span class="p">,</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">skipped_files</span><span class="p">[:</span><span class="n">max_listed</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">num_remaining</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">skipped_files</span><span class="p">)</span> <span class="o">-</span> <span class="n">max_listed</span>
+        <span class="k">if</span> <span class="n">num_remaining</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ... and </span><span class="si">{</span><span class="n">num_remaining</span><span class="si">}</span><span class="s2"> more"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Excluded files:</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ReadersInterface.concatenate_metadata"><a class="viewcode-back" href="../../../../geoips_api/geoips.interfaces.class_based.html#geoips.interfaces.class_based.readers.ReadersInterface.concatenate_metadata">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">concatenate_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_metadata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Merge together metadata sourced from a list of files into one dictionary.</span>

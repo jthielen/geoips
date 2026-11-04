@@ -418,7 +418,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0" />
-    <meta name="docbuild:last-update" content="Oct 19, 2026 21:10:23"/>
+    <meta name="docbuild:last-update" content="Nov 04, 2026 22:25:14"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -971,10 +971,26 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="HritError"><a class="viewcode-back" href="../../../../../../geoips_api/geoips.plugins.classes.readers.utils.html#geoips.plugins.classes.readers.utils.hrit_reader.HritError">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">HritError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Raise exception when errors occur in reading xRIT data files."""</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Initialize HritError."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">start_datetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_datetime</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize HritError.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        msg : str</span>
+<span class="sd">            Error message.</span>
+<span class="sd">        code : optional</span>
+<span class="sd">            Error code prepended to the message when converted to a string.</span>
+<span class="sd">        start_datetime : datetime.datetime, optional</span>
+<span class="sd">            Start datetime of the file that raised this error, if known. Allows</span>
+<span class="sd">            callers to still use the file's times when the error is recoverable.</span>
+<span class="sd">        end_datetime : datetime.datetime, optional</span>
+<span class="sd">            End datetime of the file that raised this error, if known.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">msg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_datetime</span> <span class="o">=</span> <span class="n">end_datetime</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Hriterror str method."""</span>

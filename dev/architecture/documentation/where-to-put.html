@@ -209,7 +209,7 @@ const runMermaid = async (rerun) => {
                                     // Apply zoom to the now-rendered diagram, matching
                                     // the decoration visible diagrams receive.
                                     if (true) {
-                                        addZoomToSvgs(d3.selectAll(".mermaid[data-zoom-id=id-e1baf226-5e29-4327-aa15-aa6c1975c3f4]").select(function() {
+                                        addZoomToSvgs(d3.selectAll(".mermaid[data-zoom-id=id-053f803e-3a36-496a-94a1-4a0a9dac2fe3]").select(function() {
                                             return this.querySelector("svg");
                                         }));
                                     }
@@ -235,7 +235,7 @@ const runMermaid = async (rerun) => {
     if (true) {
         const mermaids_to_add_zoom = 1 === -1 ? mermaids_active.length : 1;
         if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll(".mermaid[data-zoom-id=id-e1baf226-5e29-4327-aa15-aa6c1975c3f4]").select(function() {
+            var svgs = d3.selectAll(".mermaid[data-zoom-id=id-053f803e-3a36-496a-94a1-4a0a9dac2fe3]").select(function() {
                 return this.querySelector("svg");
             });
             // Wait until every active (visible) diagram has rendered. Deferred
@@ -422,7 +422,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0" />
-    <meta name="docbuild:last-update" content="Oct 19, 2026 21:10:23"/>
+    <meta name="docbuild:last-update" content="Nov 04, 2026 22:25:14"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -918,7 +918,7 @@ window.runMermaid = runMermaid;</script>
 <section id="flowchart">
 <h2>Flowchart<a class="headerlink" href="#flowchart" title="Permalink to this heading">#</a></h2>
 <p>Please use this flowchart to figure out where to put new documentation.</p>
-<pre data-zoom-id="id-e1baf226-5e29-4327-aa15-aa6c1975c3f4" class="mermaid">
+<pre data-zoom-id="id-053f803e-3a36-496a-94a1-4a0a9dac2fe3" class="mermaid">
         flowchart TD
     Start[Start]
     DocBuild{Are you modifying the homepage or how the documentation is built?}

@@ -1,8 +1,6 @@
-Version 1.14.0 (2026-10-19)
+Version 1.14.0 (2026-11-04)
 ***************************
 
- * *Documentation*: Make all documentation sections optional
- * *Documentation*: Resolve pdf doc build issues
  * *Installation*: Remove path and python path from setup configs
  * *Github actions*: Turn off pdf doc build from doc-test
  * *Github actions*: Turn off rst release note check from version release branches
@@ -10,41 +8,9 @@ Version 1.14.0 (2026-10-19)
  * *Github actions*: Move reusable workflows and sync files to geoips_ci
  * *Github actions*: Add standard synced files to geoips repo
  * *Documentation*: Build rst release notes from yaml files every time
+ * *Documentation*: Resolve pdf doc build issues
+ * *Documentation*: Make all documentation sections optional
  * *Release process*: Add pip and mamba 1.14.0 environment files
-
-Documentation
-=============
-
-Make all documentation sections optional
-----------------------------------------
-
-*From issue GEOIPS#562: 2024-08-15, version update*
-
-Previously required introduction and user guide - allow building documentation
-with only release notes and API.
-
-::
-
-     modified: docs/build_docs.sh
-     modified: docs/source/_templates/index_PKG.html
-
-Resolve pdf doc build issues
-----------------------------
-
-*From issue GEOIPS#562: 2024-08-15, version update*
-
-PDF doc builds often fail when html succeeds - this MUST be tested regularly
-on PR merge, to ensure we keep up with pdf builds as well as html. Much easier to
-resolve issues as they crop up rather than much later when we realize it's failing.
-
-Temporarily turn off all pdf builds, and comment out the pdf download from the
-documentation index template.
-
-::
-
-     modified: .github/workflows/doc-test.yaml
-     modified: .github/workflows/reusable-deploy-docs.yaml
-     modified: docs/source/_templates/index_PKG.html
 
 Installation
 ============
@@ -195,6 +161,40 @@ to prepare for the next release.
 
      modified: docs/build_docs.sh
      modified: docs/update_release_note_index.py
+
+Documentation
+=============
+
+Resolve pdf doc build issues
+----------------------------
+
+*From issue GEOIPS#562: 2024-08-15, version update*
+
+PDF doc builds often fail when html succeeds - this MUST be tested regularly
+on PR merge, to ensure we keep up with pdf builds as well as html. Much easier to
+resolve issues as they crop up rather than much later when we realize it's failing.
+
+Temporarily turn off all pdf builds, and comment out the pdf download from the
+documentation index template.
+
+::
+
+     modified: .github/workflows/doc-test.yaml
+     modified: .github/workflows/reusable-deploy-docs.yaml
+     modified: docs/source/_templates/index_PKG.html
+
+Make all documentation sections optional
+----------------------------------------
+
+*From issue GEOIPS#562: 2024-08-15, version update*
+
+Previously required introduction and user guide - allow building documentation
+with only release notes and API.
+
+::
+
+     modified: docs/build_docs.sh
+     modified: docs/source/_templates/index_PKG.html
 
 Release process
 ===============

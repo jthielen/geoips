@@ -1,61 +1,79 @@
-Version 1.14.5 (2026-10-19)
+Version 1.14.5 (2026-11-04)
 ***************************
 
- * *Bug fix*: Fix which version of geoips is shown at the command line
- * *Bug fix*: Replace amsu-b references with mhs, and update mirs netcdf reader
- * *Bug fix*: Return error code from build_docs.sh
- * *Bug fix*: Revert naming of mhs variables
- * *Bug fix*: Replace all geoips paths in output file list, not just geoips_outdirs
- * *Bug fix*: Black and flake8 updates for cogeotiff
- * *Bug fix*: Add support for adding b-deck files to tc tracks database
  * *Bug fix*: Allow command line tests for editable and non-editable installs
  * *Bug fix*: Check if unit-tests folder exists when determining if it exists.
+ * *Bug fix*: Replace amsu-b references with mhs, and update mirs netcdf reader
+ * *Bug fix*: Black and flake8 updates for cogeotiff
+ * *Bug fix*: Return error code from build_docs.sh
+ * *Bug fix*: Fix which version of geoips is shown at the command line
+ * *Bug fix*: Revert naming of mhs variables
  * *Bug fix*: Resolve ami geolocation bugs.
  * *Bug fix*: Resolve issues masking near terminator for seviri reader.
- * *Bug fix*: Fix bug preventing invest b-deck files from being added to decks database
- * *Bug fix*: Close abi netcdf file object after reading
+ * *Bug fix*: Roll back xarray, attempt fix knmi scat time conversion xarray bug
+ * *Bug fix*: Add support for adding b-deck files to tc tracks database
  * *Bug fix*: Correct transparency and transform issues with cogeotiff output format
  * *Bug fix*: Abi netcdf non-resampled read roi and sat zen cutoff same as resampled
+ * *Bug fix*: Replace all geoips paths in output file list, not just geoips_outdirs
  * *Bug fix*: Fix clobbering when passing product_database_writer_kwargs
+ * *Bug fix*: Close abi netcdf file object after reading
+ * *Bug fix*: Fix bug preventing invest b-deck files from being added to decks database
  * *Bug fix*: Xfail if unit-test directory does not exist for given package.
- * *Bug fix*: Roll back xarray, attempt fix knmi scat time conversion xarray bug
- * *Enhancement*: Add noaa-21 support to viirs_netcdf reader
- * *Enhancement*: Add missingrequiredxarraymetadata error
- * *Enhancement*: Add support for ews-g3 (goes-14)
+ * *Documentation*: Add release note for version 1.14.5
+ * *Documentation*: Update upcoming and tagged versions
+ * *Documentation*: Add release note for version 1.14.5
+ * *Documentation*: Update upcoming and tagged versions
+ * *Documentation*: Add more informative error messages for create_plugin_registries
+ * *Continuous integration*: Build stable image on tag.
+ * *Enhancement*: Specify geoips_outdirs locations for satpy cache files
  * *Enhancement*: Allow setting log format strings via base_paths/config
- * *Enhancement*: Allow lat/lon based area_defs to create correct resolution in filenames.
+ * *Enhancement*: Add support for ews-g3 (goes-14)
  * *Enhancement*: Add full netcdf output formatter
  * *Enhancement*: Pass config_dict to database writer
- * *Enhancement*: Add procflow_config filename to top level of config dict
- * *Enhancement*: Add realtime test option for running current
- * *Enhancement*: Switch default vimrc colorscheme to a light theme, default
- * *Enhancement*: Specify geoips_outdirs locations for satpy cache files
  * *Enhancement*: Support scale and offset information in cogeotiff output formatter
  * *Enhancement*: Add geotiff_imagery_path to base_paths and use in geotiff_fname
  * *Enhancement*: Add imagery paths to geoips_utils replace_geoips_paths
- * *Documentation*: Add more informative error messages for create_plugin_registries
- * *Documentation*: Add release note for version 1.14.5
- * *Documentation*: Update upcoming and tagged versions
- * *Documentation*: Add release note for version 1.14.5
- * *Documentation*: Update upcoming and tagged versions
- * *Continuous integration*: Build stable image on tag.
- * *Refactor*: Consolidate setup config environment variables
- * *Refactor*: Consolidate geotiff output formatters
+ * *Enhancement*: Add noaa-21 support to viirs_netcdf reader
+ * *Enhancement*: Add missingrequiredxarraymetadata error
+ * *Enhancement*: Allow lat/lon based area_defs to create correct resolution in filenames.
+ * *Enhancement*: Add procflow_config filename to top level of config dict
+ * *Enhancement*: Add realtime test option for running current
+ * *Enhancement*: Switch default vimrc colorscheme to a light theme, default
  * *Testing*: Update geotiff test outputs
+ * *Refactor*: Consolidate geotiff output formatters
+ * *Refactor*: Consolidate setup config environment variables
 
 Bug fix
 =======
 
-Fix which version of geoips is shown at the command line
---------------------------------------------------------
+Allow command line tests for editable and non-editable installs
+---------------------------------------------------------------
 
-Filter out the deploy tags so the latest tagged version of GeoIPS is shown.
+Previously non-editable installs would fail the commandline-based unit tests.
+Ensure editable and non-editable installs both pass.  GitHub Actions workflows
+should be updated to test both editable and non-editable installs, as appropriate.
 
-geoips#775 - Fix which version of GeoIPS is shown at the command line
+Note LOG.warnings were added to the geoips_list_unit_tests unit test when the
+unit-test directory does not exist, in addition to the xfail.  Currently we
+are planning to xfail when unit-test directory does not exist.
 
 ::
 
-     modified: setup/config_geoips
+     modified: tests/unit_tests/commandline/cli_top_level_tester.py
+     modified: tests/unit_tests/commandline/test_geoips_list_scripts.py
+     modified: tests/unit_tests/commandline/test_geoips_list_unit_tests.py
+
+Check if unit-tests folder exists when determining if it exists.
+----------------------------------------------------------------
+
+Previously this checked if the length of the list of package_names was 1 to
+determine if the unit-tests folder existed.  I don't think that is correct.
+Instead, check if os.path.exists on the unit-tests folder, and if it does not
+exist, raise an error that the unit-tests folder does not exist.
+
+::
+
+     modified: geoips/commandline/geoips_list.py
 
 Replace amsu-b references with mhs, and update mirs netcdf reader
 -----------------------------------------------------------------
@@ -113,6 +131,15 @@ geoips#770 - Replace AMSU-B references with MHS
      tests/outputs/amsub_mirs.tc.183-3H.imagery_annotated/20210419_235400_WP022021_mhs_metop-a_183-3H_115kts_100p00_1p0.png.yaml
      modified: tests/scripts/mhs_mirs.tc.183-3H.imagery_annotated.sh
 
+Black and flake8 updates for cogeotiff
+--------------------------------------
+
+Black and flake8 formatting ONLY for cogeotiff.py
+
+::
+
+     modified: geoips/plugins/modules/output_formatters/cogeotiff.py
+
 Return error code from build_docs.sh
 ------------------------------------
 
@@ -121,6 +148,17 @@ Avoid incorrect 0 return from build_docs.sh if build_docs.py fails.
 ::
 
      modified: docs/build_docs.sh
+
+Fix which version of geoips is shown at the command line
+--------------------------------------------------------
+
+Filter out the deploy tags so the latest tagged version of GeoIPS is shown.
+
+geoips#775 - Fix which version of GeoIPS is shown at the command line
+
+::
+
+     modified: setup/config_geoips
 
 Revert naming of mhs variables
 ------------------------------
@@ -136,75 +174,6 @@ geoips#773 - Revert naming of MHS variables
 
      modified: geoips/plugins/modules/readers/amsua_mhs_mirs.py
      modified: geoips/plugins/yaml/products/mhs.yaml
-
-Replace all geoips paths in output file list, not just geoips_outdirs
----------------------------------------------------------------------
-
-Use existing GeoIPS utility, replace_geoips_paths, in order to ensure
-all paths are replaced in the output file list, and not just
-GEOIPS_OUTDIRS.
-
-Also, ensure the same env vars are replaced in check_output_file_list.sh as are
-replaced in replace_geoips_paths (not just GEOIPS_OUTDIRS)
-
-::
-
-     modified: geoips/plugins/modules/procflows/single_source.py
-     modified: geoips/plugins/modules/procflows/config_based.py
-     modified: tests/utils/check_output_file_list.sh
-
-Black and flake8 updates for cogeotiff
---------------------------------------
-
-Black and flake8 formatting ONLY for cogeotiff.py
-
-::
-
-     modified: geoips/plugins/modules/output_formatters/cogeotiff.py
-
-Add support for adding b-deck files to tc tracks database
----------------------------------------------------------
-
-The update_tc_tracks_database previously only supported G-Deck files, which are
-not available outside NRL. This commandline utility/database should support tracking
-B-Deck files. The files are largely similar, biggest difference relates to the index
-of the storm name between the two files, and how lat/lon values are stored in the
-files.
-
-GEOIPS#759
-
-::
-
-     modified: geoips/sector_utils/tc_tracks_database.py
-
-Allow command line tests for editable and non-editable installs
----------------------------------------------------------------
-
-Previously non-editable installs would fail the commandline-based unit tests.
-Ensure editable and non-editable installs both pass.  GitHub Actions workflows
-should be updated to test both editable and non-editable installs, as appropriate.
-
-Note LOG.warnings were added to the geoips_list_unit_tests unit test when the
-unit-test directory does not exist, in addition to the xfail.  Currently we
-are planning to xfail when unit-test directory does not exist.
-
-::
-
-     modified: tests/unit_tests/commandline/cli_top_level_tester.py
-     modified: tests/unit_tests/commandline/test_geoips_list_scripts.py
-     modified: tests/unit_tests/commandline/test_geoips_list_unit_tests.py
-
-Check if unit-tests folder exists when determining if it exists.
-----------------------------------------------------------------
-
-Previously this checked if the length of the list of package_names was 1 to
-determine if the unit-tests folder existed.  I don't think that is correct.
-Instead, check if os.path.exists on the unit-tests folder, and if it does not
-exist, raise an error that the unit-tests folder does not exist.
-
-::
-
-     modified: geoips/commandline/geoips_list.py
 
 Resolve ami geolocation bugs.
 -----------------------------
@@ -226,48 +195,32 @@ AMI geolocation bugs.
 
      modified: geoips/plugins/modules/readers/seviri_hrit.py
 
-Fix bug preventing invest b-deck files from being added to decks database
--------------------------------------------------------------------------
+Roll back xarray, attempt fix knmi scat time conversion xarray bug
+------------------------------------------------------------------
 
-Fix bug that was preventing b-deck invest files from being added to the TC decks
-database. The regular expression check for b-deck files was only supporting
-named storm files and not invests, which contain the storm start time in
-the deck file name.
+This didn't quite work, checking it in for reference, roll back xr.
 
-Also add error handling if either a b-deck or g-deck file cannot be parsed and added
-to the decks database.
+geoips#749 - support cogeotiff scale and offset information
 
-geoips#759 - Fix bug preventing invest b-deck files from being added to decks database
+::
+
+     modified: pyproject.toml
+     modified: geoips/plugins/modules/readers/scat_knmi_winds_netcdf.py
+
+Add support for adding b-deck files to tc tracks database
+---------------------------------------------------------
+
+The update_tc_tracks_database previously only supported G-Deck files, which are
+not available outside NRL. This commandline utility/database should support tracking
+B-Deck files. The files are largely similar, biggest difference relates to the index
+of the storm name between the two files, and how lat/lon values are stored in the
+files.
+
+GEOIPS#759
 
 ::
 
      modified: geoips/sector_utils/tc_tracks_database.py
-
-Close abi netcdf file object after reading
-------------------------------------------
-
-ABI netcdf files were opened for reading, but never closed.
-Ignoring the terrible practice, while this may have worked
-with netcdf4<1.7.0, this likely has been causing issues with
-config based processing using netcdf4>1.7.0. In certain config
-based procflows too many netcdf file objects were left open
-after reading in the requested data, causing Python to crash.
-This error was very difficult to track down, and this explanation
-is only a hunch based off this error that only popped up once
-out of many, many tests -
-> 19_224022   abi_netcdf.py 720     INFO: Only need metadata from first file, returning
-> There are 835 HDF5 objects open!
-> Report: open objects on 72057594037927942
-> 28322 Segmentation fault      (core dumped)
-
-No segfaults have been observed after closing the netcdf file,
-so thinking this was the source of the error.
-
-geoips#783 - numpy bug fixes
-
-::
-
-     modified: geoips/plugins/modules/readers/abi_netcdf.py
 
 Correct transparency and transform issues with cogeotiff output format
 ----------------------------------------------------------------------
@@ -318,6 +271,22 @@ GEOIPS#745 - Bug fix geotiff transparency and transforms
 
      modified: geoips/plugins/modules/readers/abi_netcdf.py
 
+Replace all geoips paths in output file list, not just geoips_outdirs
+---------------------------------------------------------------------
+
+Use existing GeoIPS utility, replace_geoips_paths, in order to ensure
+all paths are replaced in the output file list, and not just
+GEOIPS_OUTDIRS.
+
+Also, ensure the same env vars are replaced in check_output_file_list.sh as are
+replaced in replace_geoips_paths (not just GEOIPS_OUTDIRS)
+
+::
+
+     modified: geoips/plugins/modules/procflows/single_source.py
+     modified: geoips/plugins/modules/procflows/config_based.py
+     modified: tests/utils/check_output_file_list.sh
+
 Fix clobbering when passing product_database_writer_kwargs
 ----------------------------------------------------------
 
@@ -334,6 +303,49 @@ GEOIPS#754
 
      modified: geoips/plugins/modules/procflows/config_based.py
 
+Close abi netcdf file object after reading
+------------------------------------------
+
+ABI netcdf files were opened for reading, but never closed.
+Ignoring the terrible practice, while this may have worked
+with netcdf4<1.7.0, this likely has been causing issues with
+config based processing using netcdf4>1.7.0. In certain config
+based procflows too many netcdf file objects were left open
+after reading in the requested data, causing Python to crash.
+This error was very difficult to track down, and this explanation
+is only a hunch based off this error that only popped up once
+out of many, many tests -
+> 19_224022   abi_netcdf.py 720     INFO: Only need metadata from first file, returning
+> There are 835 HDF5 objects open!
+> Report: open objects on 72057594037927942
+> 28322 Segmentation fault      (core dumped)
+
+No segfaults have been observed after closing the netcdf file,
+so thinking this was the source of the error.
+
+geoips#783 - numpy bug fixes
+
+::
+
+     modified: geoips/plugins/modules/readers/abi_netcdf.py
+
+Fix bug preventing invest b-deck files from being added to decks database
+-------------------------------------------------------------------------
+
+Fix bug that was preventing b-deck invest files from being added to the TC decks
+database. The regular expression check for b-deck files was only supporting
+named storm files and not invests, which contain the storm start time in
+the deck file name.
+
+Also add error handling if either a b-deck or g-deck file cannot be parsed and added
+to the decks database.
+
+geoips#759 - Fix bug preventing invest b-deck files from being added to decks database
+
+::
+
+     modified: geoips/sector_utils/tc_tracks_database.py
+
 Xfail if unit-test directory does not exist for given package.
 --------------------------------------------------------------
 
@@ -348,51 +360,106 @@ geoips_db#19
 
      modified: tests/unit_tests/commandline/test_geoips_list_unit_tests.py
 
-Roll back xarray, attempt fix knmi scat time conversion xarray bug
-------------------------------------------------------------------
+Documentation
+=============
 
-This didn't quite work, checking it in for reference, roll back xr.
+Add release note for version 1.14.5
+-----------------------------------
 
-geoips#749 - support cogeotiff scale and offset information
+Release note on release branch to force tag/release, package/publish,
+and deploy docs.
+
+Additionally add any updated files from geoips_ci/sync
+
+GEOIPS#753 - 1.14.5 updates
 
 ::
 
-     modified: pyproject.toml
-     modified: geoips/plugins/modules/readers/scat_knmi_winds_netcdf.py
+     added: docs/source/releases/latest/1.14.5-release-note.yaml
+     modified: geoips_ci/sync updated files
+
+Update upcoming and tagged versions
+-----------------------------------
+
+* Tagged version: 1.14.5
+* Upcoming version: 1.15.1
+
+GEOIPS#753 - 1.14.5 updates
+
+::
+
+     modified: .github/versions/tagged_version
+     modified: .github/versions/upcoming_version
+
+Add release note for version 1.14.5
+-----------------------------------
+
+Release note on release branch to force tag/release, package/publish,
+and deploy docs.
+
+Additionally add any updated files from geoips_ci/sync
+
+GEOIPS#753 - 1.14.5 updates
+
+::
+
+     added: docs/source/releases/latest/1.14.5-release-note.yaml
+     modified: geoips_ci/sync updated files
+
+Update upcoming and tagged versions
+-----------------------------------
+
+* Tagged version: 1.14.5
+* Upcoming version: 1.15.1
+
+GEOIPS#753 - 1.14.5 updates
+
+::
+
+     modified: .github/versions/tagged_version
+     modified: .github/versions/upcoming_version
+
+Add more informative error messages for create_plugin_registries
+----------------------------------------------------------------
+
+Ensure informative error message when docstring does not exist in plugins.
+
+GEOIPS#745 - Bug fix geotiff transparency and transforms
+
+::
+
+     modified: geoips/create_plugin_registries.py
+
+Continuous integration
+======================
+
+Build stable image on tag.
+--------------------------
+
+Ensure stable geoips docker image is built on tag/release.  This ensures
+the latest stable image is available for plugin packages to use in PR
+status checks.
+
+::
+
+     added: .github/workflows/build-stable-image.yaml
 
 Enhancement
 ===========
 
-Add noaa-21 support to viirs_netcdf reader
-------------------------------------------
+Specify geoips_outdirs locations for satpy cache files
+------------------------------------------------------
 
-JPSS-2 -> NOAA-21 platform name in viirs_netcdf.
+This also enables satpy lonlat and sensor angle caching, by setting
 
-::
-
-     modified: geoips/plugins/modules/readers/viirs_netcdf.py
-
-Add missingrequiredxarraymetadata error
----------------------------------------
-
-Error to raise if at any point during geoips processing an xarray object
-does not contain all required metadata.  We should add a function to validate
-the output of readers, etc, and raise this error if any metadata is missing.
+* SATPY_CACHE_DIR
+* SATPY_TMP_DIR
+* SATPY_CACHE_LONLATS=True
+* SATPY_CACHE_SENSOR_ANGLES=True
 
 ::
 
-     modified: geoips/errors.py
-
-Add support for ews-g3 (goes-14)
---------------------------------
-
-Add hooks for EWS-G3 (GOES-14) to ewsg reader.
-
-geoips#747
-
-::
-
-     modified: geoips/plugins/modules/readers/ewsg_netcdf.py
+     modified: setup/config_geoips
 
 Allow setting log format strings via base_paths/config
 ------------------------------------------------------
@@ -413,16 +480,16 @@ log_setup.py directly.
      modified: geoips/filenames/base_paths.py
      modified: geoips/commandline/args.py
 
-Allow lat/lon based area_defs to create correct resolution in filenames.
-------------------------------------------------------------------------
+Add support for ews-g3 (goes-14)
+--------------------------------
 
-I don't think this actually works 100%.  May need to adjust slightly.
+Add hooks for EWS-G3 (GOES-14) to ewsg reader.
 
-GEOIPS#745 - Bug fix geotiff transparency and transforms
+geoips#747
 
 ::
 
-     modified: geoips/plugins/modules/filename_formatters/geoips_fname.py
+     modified: geoips/plugins/modules/readers/ewsg_netcdf.py
 
 Add full netcdf output formatter
 --------------------------------
@@ -451,57 +518,6 @@ GEOIPS#111 - pass config_dict to database writers
 ::
 
      modified: geoips/plugins/modules/procflows/config_based.py
-
-Add procflow_config filename to top level of config dict
---------------------------------------------------------
-
-This allows printing the full path to the procflow config file on error.
-Really only required for error messaging.
-
-geoips_db#19
-
-::
-
-     modified: geoips/plugins/modules/procflows/config_based.py
-
-Add realtime test option for running current
---------------------------------------------
-
-Allow setting up realtime test scripts to run on current datasets.
-The run_current option will allow switching between pointing to the canned
-test datasets and the current datasets.  This would require implementation
-within individual realtime test scripts.
-
-geoips_db#19
-
-::
-
-     modified: tests/utils/get_realtime_test_args.sh
-
-Switch default vimrc colorscheme to a light theme, default
-----------------------------------------------------------
-
-Use light by default, not dark
-
-geoips_db#19
-
-::
-
-     modified: setup/bash_setup/vimrc_ale
-
-Specify geoips_outdirs locations for satpy cache files
-------------------------------------------------------
-
-This also enables satpy lonlat and sensor angle caching, by setting
-
-* SATPY_CACHE_DIR
-* SATPY_TMP_DIR
-* SATPY_CACHE_LONLATS=True
-* SATPY_CACHE_SENSOR_ANGLES=True
-
-::
-
-     modified: setup/config_geoips
 
 Support scale and offset information in cogeotiff output formatter
 ------------------------------------------------------------------
@@ -543,121 +559,73 @@ geoips#749 - support cogeotiff scale and offset information
 
      modified: geoips/geoips_utils.py
 
-Documentation
-=============
+Add noaa-21 support to viirs_netcdf reader
+------------------------------------------
 
-Add more informative error messages for create_plugin_registries
-----------------------------------------------------------------
+JPSS-2 -> NOAA-21 platform name in viirs_netcdf.
 
-Ensure informative error message when docstring does not exist in plugins.
+::
+
+     modified: geoips/plugins/modules/readers/viirs_netcdf.py
+
+Add missingrequiredxarraymetadata error
+---------------------------------------
+
+Error to raise if at any point during geoips processing an xarray object
+does not contain all required metadata.  We should add a function to validate
+the output of readers, etc, and raise this error if any metadata is missing.
+
+::
+
+     modified: geoips/errors.py
+
+Allow lat/lon based area_defs to create correct resolution in filenames.
+------------------------------------------------------------------------
+
+I don't think this actually works 100%.  May need to adjust slightly.
 
 GEOIPS#745 - Bug fix geotiff transparency and transforms
 
 ::
 
-     modified: geoips/create_plugin_registries.py
+     modified: geoips/plugins/modules/filename_formatters/geoips_fname.py
 
-Add release note for version 1.14.5
------------------------------------
+Add procflow_config filename to top level of config dict
+--------------------------------------------------------
 
-Release note on release branch to force tag/release, package/publish,
-and deploy docs.
+This allows printing the full path to the procflow config file on error.
+Really only required for error messaging.
 
-Additionally add any updated files from geoips_ci/sync
-
-GEOIPS#753 - 1.14.5 updates
+geoips_db#19
 
 ::
 
-     added: docs/source/releases/latest/1.14.5-release-note.yaml
-     modified: geoips_ci/sync updated files
+     modified: geoips/plugins/modules/procflows/config_based.py
 
-Update upcoming and tagged versions
------------------------------------
+Add realtime test option for running current
+--------------------------------------------
 
-* Tagged version: 1.14.5
-* Upcoming version: 1.15.1
+Allow setting up realtime test scripts to run on current datasets.
+The run_current option will allow switching between pointing to the canned
+test datasets and the current datasets.  This would require implementation
+within individual realtime test scripts.
 
-GEOIPS#753 - 1.14.5 updates
-
-::
-
-     modified: .github/versions/tagged_version
-     modified: .github/versions/upcoming_version
-
-Add release note for version 1.14.5
------------------------------------
-
-Release note on release branch to force tag/release, package/publish,
-and deploy docs.
-
-Additionally add any updated files from geoips_ci/sync
-
-GEOIPS#753 - 1.14.5 updates
+geoips_db#19
 
 ::
 
-     added: docs/source/releases/latest/1.14.5-release-note.yaml
-     modified: geoips_ci/sync updated files
+     modified: tests/utils/get_realtime_test_args.sh
 
-Update upcoming and tagged versions
------------------------------------
+Switch default vimrc colorscheme to a light theme, default
+----------------------------------------------------------
 
-* Tagged version: 1.14.5
-* Upcoming version: 1.15.1
+Use light by default, not dark
 
-GEOIPS#753 - 1.14.5 updates
+geoips_db#19
 
 ::
 
-     modified: .github/versions/tagged_version
-     modified: .github/versions/upcoming_version
-
-Continuous integration
-======================
-
-Build stable image on tag.
---------------------------
-
-Ensure stable geoips docker image is built on tag/release.  This ensures
-the latest stable image is available for plugin packages to use in PR
-status checks.
-
-::
-
-     added: .github/workflows/build-stable-image.yaml
-
-Refactor
-========
-
-Consolidate setup config environment variables
-----------------------------------------------
-
-* Add create_brassy_changelog helper function
-* Use $GEOIPS_CONFIG_PATH and $GEOIPS_CONFIG_FILE env vars for reference
-* Use $GEOIPS_SYSTEM_VERSION if defined in prompt, else $GEOIPS_VERSION
-
-geoips#753 - version release
-
-::
-
-     modified: setup/config_geoips
-     modified: setup/bash_setup/color_prompt
-
-Consolidate geotiff output formatters
--------------------------------------
-
-Have cogeotiff_rgba and geotiff_standard both call cogeotiff.  Eventually
-probably delete these, unless we find there is a benefit to having the
-ability to explicitly request no-cog (geotiff_standard), or explicitly
-request RGBA (auto-detected in cogeotiff)
-
-GEOIPS#745 - Bug fix geotiff transparency and transforms
-
-::
-
-     modified: geoips/plugins/modules/output_formatters/cogeotiff_rgba.py
-     modified: geoips/plugins/modules/output_formatters/geotiff_standard.py
+     modified: setup/bash_setup/vimrc_ale
 
 Testing
 =======
@@ -678,3 +646,35 @@ GEOIPS#749 - Support cogeotiff scale and offset information
      modified: tests/outputs/ahi.tc.WV.geotiff/20200405_000000_SH252020_ahi_himawari-8_WV_100kts_100p00_1p0.tif
      modified:
      tests/outputs/amsr2.global_20km_longlat.89H-Physical.cogeotiff/20200518.062048.gcom-w1.amsr2.89H-Physical.global_20km_longlat.18p37.star.20p0.tif
+
+Refactor
+========
+
+Consolidate geotiff output formatters
+-------------------------------------
+
+Have cogeotiff_rgba and geotiff_standard both call cogeotiff.  Eventually
+probably delete these, unless we find there is a benefit to having the
+ability to explicitly request no-cog (geotiff_standard), or explicitly
+request RGBA (auto-detected in cogeotiff)
+
+GEOIPS#745 - Bug fix geotiff transparency and transforms
+
+::
+
+     modified: geoips/plugins/modules/output_formatters/cogeotiff_rgba.py
+     modified: geoips/plugins/modules/output_formatters/geotiff_standard.py
+
+Consolidate setup config environment variables
+----------------------------------------------
+
+* Add create_brassy_changelog helper function
+* Use $GEOIPS_CONFIG_PATH and $GEOIPS_CONFIG_FILE env vars for reference
+* Use $GEOIPS_SYSTEM_VERSION if defined in prompt, else $GEOIPS_VERSION
+
+geoips#753 - version release
+
+::
+
+     modified: setup/config_geoips
+     modified: setup/bash_setup/color_prompt

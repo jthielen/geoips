@@ -418,7 +418,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0" />
-    <meta name="docbuild:last-update" content="Oct 19, 2026 21:10:23"/>
+    <meta name="docbuild:last-update" content="Nov 04, 2026 22:25:14"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -1266,12 +1266,10 @@ window.runMermaid = runMermaid;</script>
             <span class="n">md</span><span class="p">[</span><span class="s2">"sector_name"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Full-Disk"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">projection</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"block_2"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"projection"</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="n">st</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">start_datetime</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
-            <span class="n">et</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">start_datetime</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">HritError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Unknown projection encountered: </span><span class="si">{</span><span class="n">projection</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span>
-                <span class="sa">f</span><span class="s2">"start_datetime=</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-                <span class="sa">f</span><span class="s2">"end_datetime=</span><span class="si">{</span><span class="n">et</span><span class="si">}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"Unknown projection encountered: </span><span class="si">{</span><span class="n">projection</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
+                <span class="n">start_datetime</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">start_datetime</span><span class="p">,</span>
+                <span class="n">end_datetime</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">start_datetime</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">md</span><span class="p">[</span><span class="s2">"start_datetime"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">start_datetime</span>
         <span class="n">md</span><span class="p">[</span><span class="s2">"end_datetime"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">start_datetime</span>

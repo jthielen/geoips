@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0" />
-    <meta name="docbuild:last-update" content="Oct 19, 2026 21:10:23"/>
+    <meta name="docbuild:last-update" content="Nov 04, 2026 22:25:14"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -577,14 +577,15 @@ through these playbooks.</p>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#docker-integration" id="id18">Docker integration</a></p></li>
-<li><p><a class="reference internal" href="#branch-fallback-strategy" id="id19">Branch fallback strategy</a></p></li>
-<li><p><a class="reference internal" href="#idempotency" id="id20">Idempotency</a></p></li>
-<li><p><a class="reference internal" href="#adding-new-repositories" id="id21">Adding new repositories</a></p></li>
-<li><p><a class="reference internal" href="#troubleshooting" id="id22">Troubleshooting</a></p>
+<li><p><a class="reference internal" href="#testing-against-other-branches" id="id19">Testing against other branches</a></p></li>
+<li><p><a class="reference internal" href="#disabling-plugin-repos" id="id20">Disabling plugin repos</a></p></li>
+<li><p><a class="reference internal" href="#idempotency" id="id21">Idempotency</a></p></li>
+<li><p><a class="reference internal" href="#adding-new-repositories" id="id22">Adding new repositories</a></p></li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id23">Troubleshooting</a></p>
 <ul>
-<li><p><a class="reference internal" href="#increase-verbosity" id="id23">Increase verbosity</a></p></li>
-<li><p><a class="reference internal" href="#dry-run" id="id24">Dry run</a></p></li>
-<li><p><a class="reference internal" href="#re-running-after-a-failure" id="id25">Re-running after a failure</a></p></li>
+<li><p><a class="reference internal" href="#increase-verbosity" id="id24">Increase verbosity</a></p></li>
+<li><p><a class="reference internal" href="#dry-run" id="id25">Dry run</a></p></li>
+<li><p><a class="reference internal" href="#re-running-after-a-failure" id="id26">Re-running after a failure</a></p></li>
 </ul>
 </li>
 </ul>
@@ -748,25 +749,34 @@ image.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geoips_use_private_plugins</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
-<td><p>Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to include proprietary plugin repos (<code class="docutils literal notranslate"><span class="pre">ryglickicane</span></code>, <code class="docutils literal notranslate"><span class="pre">tc_mint</span></code>,
-<code class="docutils literal notranslate"><span class="pre">lunarref</span></code>, <code class="docutils literal notranslate"><span class="pre">true_color</span></code>).</p></td>
+<td><p>Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to include proprietary plugin repos (<code class="docutils literal notranslate"><span class="pre">pyrocb</span></code>,
+<code class="docutils literal notranslate"><span class="pre">geoips_nucaps</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_proxyvis</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_tomorrowio</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_wsfm</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ryglickicane</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_debra</span></code>).  <code class="docutils literal notranslate"><span class="pre">geoips_xesmf</span></code> is disabled for now.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">extra_plugin_packages</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
 <td><p>Comma-separated list of additional plugin repository names to clone and install.
 Corresponds to the <code class="docutils literal notranslate"><span class="pre">EXTRA_PLUGINS</span></code> Docker build argument.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geoips_modified_branch</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">repo_branches</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
-<td><p>After cloning each repo, attempt to check out this branch.  Falls back silently to
-the default branch if it does not exist.  See <a class="reference internal" href="#branch-fallback-strategy">Branch fallback strategy</a>
-for details on how this is handled across repos.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;repo=ref</span> <span class="pre">repo=ref</span> <span class="pre">...&quot;</span></code>: clone these repos at a branch, tag or commit instead of
+their default branch.  For example, <code class="docutils literal notranslate"><span class="pre">geoips_clavrx=fix_bug</span></code> clones the <code class="docutils literal notranslate"><span class="pre">fix_bug</span></code>
+branch of <code class="docutils literal notranslate"><span class="pre">geoips_clavrx</span></code>.  <code class="docutils literal notranslate"><span class="pre">repo=owner:ref</span></code> clones the ref from <code class="docutils literal notranslate"><span class="pre">owner</span></code>’s
+fork, e.g. <code class="docutils literal notranslate"><span class="pre">rayleigh=someone:fix_bug</span></code>.  Read from the <code class="docutils literal notranslate"><span class="pre">REPO_BRANCHES</span></code>
+environment variable.
+See <a class="reference internal" href="#testing-against-other-branches">Testing against other branches</a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">geoips_packages_dir</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">disabled_repos</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;repo</span> <span class="pre">repo</span> <span class="pre">...&quot;</span></code>: plugin repos to leave out of the install.  Read from the
+<code class="docutils literal notranslate"><span class="pre">DISABLED_REPOS</span></code> environment variable.  See <a class="reference internal" href="#disabling-plugin-repos">Disabling plugin repos</a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geoips_packages_dir</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">/packages</span></code></p></td>
 <td><p>Root directory where repos are cloned.  Reads <code class="docutils literal notranslate"><span class="pre">GEOIPS_PACKAGES_DIR</span></code> env var.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geoips_testdata_dir</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">geoips_testdata_dir</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">/geoips_testdata</span></code></p></td>
 <td><p>Root directory for test datasets.  Reads <code class="docutils literal notranslate"><span class="pre">GEOIPS_TESTDATA_DIR</span></code> env var.</p></td>
 </tr>
@@ -813,18 +823,23 @@ ansible-playbook<span class="w"> </span>playbooks/test_data.yml<span class="w"> 
 volume — it is never built into an image.  Keeping the download in its own playbook enforces
 this boundary and allows CI to cache the test-data volume between runs independently of image
 rebuilds.</p>
-<p>The datasets installed at each tier are defined in
-<code class="docutils literal notranslate"><span class="pre">tests/ansible/roles/test_data/defaults/main.yml</span></code>:</p>
+<p>The datasets installed at each tier are defined in <code class="docutils literal notranslate"><span class="pre">tests/ansible/inventory/local.yml</span></code>
+(mirrored in <code class="docutils literal notranslate"><span class="pre">tests/ansible/roles/test_data/defaults/main.yml</span></code>; the inventory wins
+when both are used, so keep them in sync):</p>
 <ul class="simple">
 <li><p><strong>base</strong>: <code class="docutils literal notranslate"><span class="pre">test_data_amsr2</span></code></p></li>
-<li><p><strong>full</strong>: <code class="docutils literal notranslate"><span class="pre">test_data_amsub</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_arctic_weather_satellite</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_atms</span></code>,
-<code class="docutils literal notranslate"><span class="pre">test_data_cygnss</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_fci</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_gfs</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_gpm</span></code>,
-<code class="docutils literal notranslate"><span class="pre">test_data_modis</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_multi_scan_times</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_saphir</span></code>,
-<code class="docutils literal notranslate"><span class="pre">test_data_sar</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_scat</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_seviri</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_smap</span></code>,
-<code class="docutils literal notranslate"><span class="pre">test_data_smos</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_tpw</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_viirs</span></code></p></li>
-<li><p><strong>site</strong>: <code class="docutils literal notranslate"><span class="pre">template_test_data</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_clavrx</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_fusion</span></code>,
-<code class="docutils literal notranslate"><span class="pre">test_data_geocolor</span></code></p></li>
-<li><p><strong>private</strong> (<code class="docutils literal notranslate"><span class="pre">geoips_use_private_plugins=true</span></code>): <code class="docutils literal notranslate"><span class="pre">test_data_mint</span></code></p></li>
+<li><p><strong>full</strong>: <code class="docutils literal notranslate"><span class="pre">test_data_abi</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_ahi</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_ami</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_amsub</span></code>,
+<code class="docutils literal notranslate"><span class="pre">test_data_arctic_weather_satellite</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_atms</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_cygnss</span></code>,
+<code class="docutils literal notranslate"><span class="pre">test_data_fci</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_gfs</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_gpm</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_modis</span></code>,
+<code class="docutils literal notranslate"><span class="pre">test_data_multi_scan_times</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_saphir</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_sar</span></code>,
+<code class="docutils literal notranslate"><span class="pre">test_data_scat</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_seviri</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_smap</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_smos</span></code>,
+<code class="docutils literal notranslate"><span class="pre">test_data_tpw</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_viirs</span></code></p></li>
+<li><p><strong>site</strong>: <code class="docutils literal notranslate"><span class="pre">test_data_clavrx</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_fusion</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_geocolor</span></code>, and the
+ancillary datasets the fortran plugins read from <code class="docutils literal notranslate"><span class="pre">$GEOIPS_ANCILDAT</span></code>:
+<code class="docutils literal notranslate"><span class="pre">city_lights</span></code>, <code class="docutils literal notranslate"><span class="pre">elevation</span></code>, <code class="docutils literal notranslate"><span class="pre">emiss</span></code>, <code class="docutils literal notranslate"><span class="pre">lunarref</span></code>, <code class="docutils literal notranslate"><span class="pre">lw_mask</span></code>, <code class="docutils literal notranslate"><span class="pre">merra</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rayleigh</span></code>, <code class="docutils literal notranslate"><span class="pre">synth_green</span></code></p></li>
+<li><p><strong>private</strong> (<code class="docutils literal notranslate"><span class="pre">geoips_use_private_plugins=true</span></code>): <code class="docutils literal notranslate"><span class="pre">test_data_ngfs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">test_data_nucaps</span></code>, <code class="docutils literal notranslate"><span class="pre">test_data_pyrocb</span></code></p></li>
 </ul>
 </section>
 </section>
@@ -860,9 +875,12 @@ CI scripts.  Only runs at <code class="docutils literal notranslate"><span class
 <li><p><strong>Standard plugins</strong> (alphabetical): <code class="docutils literal notranslate"><span class="pre">data_fusion</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_clavrx</span></code>,
 <code class="docutils literal notranslate"><span class="pre">geoips_plugin_example</span></code>, <code class="docutils literal notranslate"><span class="pre">recenter_tc</span></code>, <code class="docutils literal notranslate"><span class="pre">template_basic_plugin</span></code></p></li>
 <li><p><strong>Fortran chain</strong> (order critical): <code class="docutils literal notranslate"><span class="pre">fortran_utils</span></code> → <code class="docutils literal notranslate"><span class="pre">rayleigh</span></code> → <code class="docutils literal notranslate"><span class="pre">ancildat</span></code>
-→ <code class="docutils literal notranslate"><span class="pre">synth_green</span></code> → <code class="docutils literal notranslate"><span class="pre">geocolor</span></code></p></li>
-<li><p><strong>Private plugins</strong> (when enabled): <code class="docutils literal notranslate"><span class="pre">ryglickicane</span></code>, <code class="docutils literal notranslate"><span class="pre">tc_mint</span></code></p></li>
-<li><p><strong>Private fortran repos</strong> (when enabled, order critical): <code class="docutils literal notranslate"><span class="pre">lunarref</span></code>, <code class="docutils literal notranslate"><span class="pre">true_color</span></code></p></li>
+→ <code class="docutils literal notranslate"><span class="pre">synth_green</span></code> → <code class="docutils literal notranslate"><span class="pre">geocolor</span></code> → <code class="docutils literal notranslate"><span class="pre">lunarref</span></code> → <code class="docutils literal notranslate"><span class="pre">true_color</span></code></p></li>
+<li><p><strong>Private plugins</strong> (when enabled): <code class="docutils literal notranslate"><span class="pre">pyrocb</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_nucaps</span></code>,
+<code class="docutils literal notranslate"><span class="pre">geoips_proxyvis</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_tomorrowio</span></code>, <code class="docutils literal notranslate"><span class="pre">geoips_wsfm</span></code>, <code class="docutils literal notranslate"><span class="pre">ryglickicane</span></code>
+(<code class="docutils literal notranslate"><span class="pre">geoips_xesmf</span></code> is disabled for now: xesmf needs the ESMF library,
+which the image does not have)</p></li>
+<li><p><strong>Private fortran repos</strong> (when enabled, order critical): <code class="docutils literal notranslate"><span class="pre">geoips_debra</span></code></p></li>
 <li><p><strong>Extra plugins</strong>: any repos passed via <code class="docutils literal notranslate"><span class="pre">extra_plugin_packages</span></code></p></li>
 </ol>
 <p>The fortran ordering constraint exists because each package depends on compiled
@@ -929,30 +947,68 @@ docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </
 </div>
 <p>Test data is always a runtime mount, never a build-time layer.</p>
 </section>
-<section id="branch-fallback-strategy">
-<h2><a class="toc-backref" href="#id19" role="doc-backlink">Branch fallback strategy</a><a class="headerlink" href="#branch-fallback-strategy" title="Permalink to this heading">#</a></h2>
-<p>Every repo clone — in both <code class="docutils literal notranslate"><span class="pre">settings_repos</span></code> and <code class="docutils literal notranslate"><span class="pre">source_repos</span></code> — follows a two-step
-pattern:</p>
-<ol class="arabic simple">
-<li><p>Attempt to clone (or checkout) the branch named by <code class="docutils literal notranslate"><span class="pre">geoips_modified_branch</span></code>.  If that
-variable is empty, this step is skipped entirely.</p></li>
-<li><p>If the branch clone failed (branch does not exist in the remote), fall back to the
-remote’s default branch.</p></li>
-</ol>
-<p>This lets CI pipelines pass a single branch name across all repos without needing to know
-which repos actually carry that branch.  Repos that do not have the branch simply land on
-their default branch without error.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">source_repos</span></code> role implements this per-repo in
-<code class="docutils literal notranslate"><span class="pre">roles/source_repos/tasks/clone_and_install.yml</span></code>.  The <code class="docutils literal notranslate"><span class="pre">settings_repos</span></code> role uses a
-batch approach: clone all repos in one loop with <code class="docutils literal notranslate"><span class="pre">failed_when:</span> <span class="pre">false</span></code>, then re-clone only
-the ones that failed.</p>
+<section id="testing-against-other-branches">
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">Testing against other branches</a><a class="headerlink" href="#testing-against-other-branches" title="Permalink to this heading">#</a></h2>
+<p>Often, changes to the core GeoIPS package require changes to other packages and
+should be tested against those changes.  By default, the CI clones the repos of
+dependencies (e.g. plugin packages) on their default branch (typically <code class="docutils literal notranslate"><span class="pre">main</span></code>).
+To test changes in core GeoIPS against a non-default branch of one or more
+dependency packages, add an entry to <code class="docutils literal notranslate"><span class="pre">.github/ci-dependencies.yaml</span></code>.</p>
+<p>For example, assume your changes are in the <code class="docutils literal notranslate"><span class="pre">my-feature-branch</span></code> branch of the
+<code class="docutils literal notranslate"><span class="pre">geoips</span></code> repository, and they need to be tested with specific versions of
+<code class="docutils literal notranslate"><span class="pre">pluginify</span></code> and <code class="docutils literal notranslate"><span class="pre">xarray</span></code>, and against the <code class="docutils literal notranslate"><span class="pre">my-fix</span></code> branch of the
+<code class="docutils literal notranslate"><span class="pre">recenter_tc</span></code> repository.  You would add this entry:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">my-feature-branch</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">python</span><span class="p">:</span><span class="w">   </span><span class="c1"># pip requirements, installed last in the image so they win</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"pluginify</span><span class="nv"> </span><span class="s">@</span><span class="nv"> </span><span class="s">git+https://github.com/NRLMMD-GEOIPS/pluginify@my-fix"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"xarray==2025.6.1"</span>
+<span class="w">  </span><span class="nt">repos</span><span class="p">:</span><span class="w">    </span><span class="c1"># repos the image clones: repo -&gt; branch, tag or commit</span>
+<span class="w">    </span><span class="nt">recenter_tc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-fix</span>
+</pre></div>
+</div>
+<p>To use a branch that only exists in a fork, give the fork’s owner as
+<code class="docutils literal notranslate"><span class="pre">owner:ref</span></code> (GitHub’s <code class="docutils literal notranslate"><span class="pre">user:branch</span></code> notation), for example
+<code class="docutils literal notranslate"><span class="pre">rayleigh:</span> <span class="pre">&quot;someone:my-fix&quot;</span></code> clones <code class="docutils literal notranslate"><span class="pre">my-fix</span></code> from
+<code class="docutils literal notranslate"><span class="pre">https://github.com/someone/rayleigh</span></code>.  The fork must have the same repo name.</p>
+<p>geoips_ci passes the <code class="docutils literal notranslate"><span class="pre">python</span></code> section to the <code class="docutils literal notranslate"><span class="pre">geoips-site</span></code> build as
+<code class="docutils literal notranslate"><span class="pre">PIP_OVERRIDES</span></code>, and the <code class="docutils literal notranslate"><span class="pre">repos</span></code> section as <code class="docutils literal notranslate"><span class="pre">REPO_BRANCHES</span></code>.  The playbook
+checks <code class="docutils literal notranslate"><span class="pre">repo_branches</span></code> before installing anything.  Three conditions cause a
+fatal error: an unknown repo, a ref that does not exist (there is no fallback to
+the default branch), or a private repo when the <code class="docutils literal notranslate"><span class="pre">site</span></code> tasks run without
+<code class="docutils literal notranslate"><span class="pre">geoips_use_private_plugins</span></code>.  The image
+records what the overrides installed in <code class="docutils literal notranslate"><span class="pre">$GEOIPS_PACKAGES_DIR/.ci_pip_overrides</span></code>
+and <code class="docutils literal notranslate"><span class="pre">$GEOIPS_PACKAGES_DIR/.ci_repo_branches</span></code>, and the CI shows both files in the
+job summary.</p>
+<p>Overrides only apply to the branch they are listed under: in the example above,
+only when testing <code class="docutils literal notranslate"><span class="pre">my-feature-branch</span></code>.  So the file can be merged without
+affecting <code class="docutils literal notranslate"><span class="pre">main</span></code> or other branches, though entries should be removed once the
+branches they point at are merged.  The CI never publishes images built with
+overrides.  Plugin repos are tested in the published GeoIPS image, so only
+<code class="docutils literal notranslate"><span class="pre">python</span></code> overrides apply there, for example
+<code class="docutils literal notranslate"><span class="pre">geoips</span> <span class="pre">&#64;</span> <span class="pre">git+https://github.com/NRLMMD-GEOIPS/geoips&#64;my-branch</span></code>.</p>
+</section>
+<section id="disabling-plugin-repos">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">Disabling plugin repos</a><a class="headerlink" href="#disabling-plugin-repos" title="Permalink to this heading">#</a></h2>
+<p>To leave plugin repos out of the CI image, for example while their install is broken,
+list them in <code class="docutils literal notranslate"><span class="pre">.github/ci-disabled-repos.yaml</span></code> with the reason:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">synth_green</span><span class="p">:</span><span class="w"> </span><span class="s">"install</span><span class="nv"> </span><span class="s">fails,</span><span class="nv"> </span><span class="s">see</span><span class="nv"> </span><span class="s">NRLMMD-GEOIPS/synth_green#12"</span>
+</pre></div>
+</div>
+<p>Unlike <code class="docutils literal notranslate"><span class="pre">.github/ci-dependencies.yaml</span></code>, this applies to every branch.  geoips_ci passes
+the names to the image build as <code class="docutils literal notranslate"><span class="pre">DISABLED_REPOS</span></code> and lists them in the job summary.  The
+playbook removes them from <code class="docutils literal notranslate"><span class="pre">plugin_repos</span></code>, <code class="docutils literal notranslate"><span class="pre">fortran_repos_ordered</span></code>,
+<code class="docutils literal notranslate"><span class="pre">private_plugin_repos</span></code> and <code class="docutils literal notranslate"><span class="pre">private_fortran_repos</span></code> (keeping the order), so they are
+not cloned, installed or tested.  A name that is not in those lists, or that is also in
+<code class="docutils literal notranslate"><span class="pre">repo_branches</span></code>, fails the run.  Repos that need a disabled repo still install, but
+the parts that use it fail: geocolor’s GeoColor products need <code class="docutils literal notranslate"><span class="pre">synth_green</span></code>, for
+example.</p>
 </section>
 <section id="idempotency">
-<h2><a class="toc-backref" href="#id20" role="doc-backlink">Idempotency</a><a class="headerlink" href="#idempotency" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Idempotency</a><a class="headerlink" href="#idempotency" title="Permalink to this heading">#</a></h2>
 <p>The playbooks are designed to be re-run safely at any point:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ansible.builtin.git</span></code> uses <code class="docutils literal notranslate"><span class="pre">update:</span> <span class="pre">false</span></code> on the fallback clone so it does not
-overwrite uncommitted changes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ansible.builtin.git</span></code> fails rather than overwrite uncommitted changes in an existing
+clone.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> with <code class="docutils literal notranslate"><span class="pre">state:</span> <span class="pre">present</span></code> is a no-op when the package is already installed
 at the correct version.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">test_data</span></code> role uses <code class="docutils literal notranslate"><span class="pre">creates:</span> <span class="pre">&quot;{{</span> <span class="pre">geoips_testdata_dir</span> <span class="pre">}}/{{</span> <span class="pre">item</span> <span class="pre">}}&quot;</span></code> so
@@ -964,7 +1020,7 @@ already exists.</p></li>
 Completed tasks will execute as fast no-ops.  Multiple runs will not hurt anything.</p>
 </section>
 <section id="adding-new-repositories">
-<h2><a class="toc-backref" href="#id21" role="doc-backlink">Adding new repositories</a><a class="headerlink" href="#adding-new-repositories" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Adding new repositories</a><a class="headerlink" href="#adding-new-repositories" title="Permalink to this heading">#</a></h2>
 <p>Repositories and which install group they belong to are managed by
 <code class="docutils literal notranslate"><span class="pre">tests/ansible/inventory/local.yml</span></code>.  To add a new repo or move a repo to a
 different install group, edit <code class="docutils literal notranslate"><span class="pre">tests/ansible/inventory/local.yml</span></code> as follows:</p>
@@ -985,23 +1041,23 @@ in <code class="docutils literal notranslate"><span class="pre">inventory/local.
 </dl>
 </section>
 <section id="troubleshooting">
-<h2><a class="toc-backref" href="#id22" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Permalink to this heading">#</a></h2>
 <section id="increase-verbosity">
-<h3><a class="toc-backref" href="#id23" role="doc-backlink">Increase verbosity</a><a class="headerlink" href="#increase-verbosity" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Increase verbosity</a><a class="headerlink" href="#increase-verbosity" title="Permalink to this heading">#</a></h3>
 <p>Add <code class="docutils literal notranslate"><span class="pre">-vvv</span></code> to any <code class="docutils literal notranslate"><span class="pre">ansible-playbook</span></code> command for detailed task output:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-playbook<span class="w"> </span>playbooks/install.yml<span class="w"> </span>--tags<span class="w"> </span>base<span class="w"> </span>-vvv
 </pre></div>
 </div>
 </section>
 <section id="dry-run">
-<h3><a class="toc-backref" href="#id24" role="doc-backlink">Dry run</a><a class="headerlink" href="#dry-run" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Dry run</a><a class="headerlink" href="#dry-run" title="Permalink to this heading">#</a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">--check</span></code> to see what Ansible <em>would</em> do without making any changes:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-playbook<span class="w"> </span>playbooks/install.yml<span class="w"> </span>--tags<span class="w"> </span>base<span class="w"> </span>--check
 </pre></div>
 </div>
 </section>
 <section id="re-running-after-a-failure">
-<h3><a class="toc-backref" href="#id25" role="doc-backlink">Re-running after a failure</a><a class="headerlink" href="#re-running-after-a-failure" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">Re-running after a failure</a><a class="headerlink" href="#re-running-after-a-failure" title="Permalink to this heading">#</a></h3>
 <p>Ansible is idempotent.  Fix the underlying issue and re-run the same command.  Completed
 tasks will be fast no-ops.</p>
 </section>
@@ -1079,7 +1135,8 @@ tasks will be fast no-ops.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-integration">Docker integration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#branch-fallback-strategy">Branch fallback strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-against-other-branches">Testing against other branches</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#disabling-plugin-repos">Disabling plugin repos</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotency">Idempotency</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-new-repositories">Adding new repositories</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
