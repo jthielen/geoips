@@ -418,7 +418,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0" />
-    <meta name="docbuild:last-update" content="Nov 04, 2026 22:25:14"/>
+    <meta name="docbuild:last-update" content="Nov 10, 2026 19:55:36"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -912,6 +912,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">remove_duplicate_minrange</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">title_copyright</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">title_formatter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">preformatted_title_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">output_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">var_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">x_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1045,18 +1046,22 @@ window.runMermaid = runMermaid;</script>
                     <span class="n">bkgrnd_clr</span><span class="o">=</span><span class="n">bkgrnd_clr</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="c1"># Set the title for final image</span>
-        <span class="n">title_string</span> <span class="o">=</span> <span class="n">get_title_string_from_objects</span><span class="p">(</span>
-            <span class="n">area_def</span><span class="p">,</span>
-            <span class="n">xarray_obj</span><span class="p">,</span>
-            <span class="n">product_name_title</span><span class="p">,</span>
-            <span class="n">product_datatype_title</span><span class="o">=</span><span class="n">product_datatype_title</span><span class="p">,</span>
-            <span class="n">bg_xarray</span><span class="o">=</span><span class="n">bg_xarray</span><span class="p">,</span>
-            <span class="n">bg_product_name_title</span><span class="o">=</span><span class="n">bg_product_name_title</span><span class="p">,</span>
-            <span class="n">bg_datatype_title</span><span class="o">=</span><span class="n">bg_datatype_title</span><span class="p">,</span>
-            <span class="n">title_copyright</span><span class="o">=</span><span class="n">title_copyright</span><span class="p">,</span>
-            <span class="n">title_formatter</span><span class="o">=</span><span class="n">title_formatter</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">preformatted_title_str</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preformatted_title_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># call() was passed a fully-formatted title string so we use it!</span>
+            <span class="n">title_string</span> <span class="o">=</span> <span class="n">preformatted_title_str</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Construct the title for final image</span>
+            <span class="n">title_string</span> <span class="o">=</span> <span class="n">get_title_string_from_objects</span><span class="p">(</span>
+                <span class="n">area_def</span><span class="p">,</span>
+                <span class="n">xarray_obj</span><span class="p">,</span>
+                <span class="n">product_name_title</span><span class="p">,</span>
+                <span class="n">product_datatype_title</span><span class="o">=</span><span class="n">product_datatype_title</span><span class="p">,</span>
+                <span class="n">bg_xarray</span><span class="o">=</span><span class="n">bg_xarray</span><span class="p">,</span>
+                <span class="n">bg_product_name_title</span><span class="o">=</span><span class="n">bg_product_name_title</span><span class="p">,</span>
+                <span class="n">bg_datatype_title</span><span class="o">=</span><span class="n">bg_datatype_title</span><span class="p">,</span>
+                <span class="n">title_copyright</span><span class="o">=</span><span class="n">title_copyright</span><span class="p">,</span>
+                <span class="n">title_formatter</span><span class="o">=</span><span class="n">title_formatter</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="n">set_title</span><span class="p">(</span><span class="n">main_ax</span><span class="p">,</span> <span class="n">title_string</span><span class="p">,</span> <span class="n">area_def</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">hist_colorbar</span><span class="p">:</span>

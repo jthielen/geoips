@@ -1,128 +1,538 @@
-Version latest (2026-11-04)
+Version latest (2026-11-10)
 ***************************
 
- * *Enhancement*: Add support for embedded workflow argument overrides
- * *Enhancement*: Implement datatree runtime for the order-based procflow
- * *Enhancement*: Adding geoipserror class
- * *Enhancement*: Obp-style scripting interface
- * *Enhancement*: Add output checker overrides to workflow-based commands
- * *Enhancement*: Obp cli updates
- * *Enhancement*: Add datatreeditto
- * *Enhancement*: Obp interpolators update
- * *Enhancement*: Default coverage checkers when product encountered
- * *Enhancement*: Add dask-based output_token provenance to workflow steps
- * *Enhancement*: Add workflow-domain exception classes
- * *Enhancement*: Rename extra_plugins to extra_plugin_packages
- * *Bug fix*: Clean fortran repos before installing them
- * *Bug fix*: Give every abi reader a dont_autogen_geolocation setting
  * *Bug fix*: Reject unimplemented spec.defaults at validation instead of ignoring it
- * *Bug fix*: Hash-based cli instruction cache invalidation
- * *Bug fix*: Fix geoips config create --all output and add field comments
- * *Bug fix*: Fix workflowstepdefinitionmodel.name accepting none due to init=false
  * *Bug fix*: Allow arguments to be none on workflow-kind steps
- * *Bug fix*: Logging files skipped by the class-based readers wrapper
- * *Bug fix*: Obp workflow implementation and validation improvements
- * *Bug fix*: Fix order-based procflow reader path (dict -> datatree)
  * *Bug fix*: Resolve expand steps python identifier processing
+ * *Bug fix*: Fix geoips config create --all output and add field comments
+ * *Bug fix*: Hash-based cli instruction cache invalidation
  * *Bug fix*: Stop workflows model reading os.environ at import
- * *Feature*: Order-based procflow: add filename formatter pydantic models
- * *Feature*: Implement split/join fan-out in the order-based procflow
- * *Feature*: Order-based procflow: add output formatters
- * *Feature*: Add colormapper pydantic model
- * *Feature*: Static multi-sector processing (sbp) via split over sector_list
- * *Feature*: Allow plugin packages to register configuration options
- * *Feature*: Add yaml-based configuration system that replaces base_paths.py
+ * *Bug fix*: Obp workflow implementation and validation improvements
+ * *Bug fix*: Give every abi reader a dont_autogen_geolocation setting
+ * *Bug fix*: Logging files skipped by the class-based readers wrapper
+ * *Bug fix*: Fix order-based procflow reader path (dict -> datatree)
+ * *Bug fix*: Add title formatter to obp conduit
+ * *Bug fix*: Fix workflowstepdefinitionmodel.name accepting none due to init=false
+ * *Bug fix*: Clean fortran repos before installing them
  * *Feature*: Add plugin_proivded as an additional default value in obp pydantic models
+ * *Feature*: Implement split/join fan-out in the order-based procflow
+ * *Feature*: Allow plugin packages to register configuration options
+ * *Feature*: Order-based procflow: add filename formatter pydantic models
  * *Feature*: Introduce order-based procflow workflows
- * *Documentation*: Update datatree spec implementation status and procflow interface docstring
- * *Documentation*: Add spec for obp datatrees
- * *Documentation*: Update sphinx configuration and add support file creation utils for versioned docs
- * *Documentation*: Add basic linting information
+ * *Feature*: Add yaml-based configuration system that replaces base_paths.py
+ * *Feature*: Add colormapper pydantic model
+ * *Feature*: Order-based procflow: add output formatters
+ * *Feature*: Static multi-sector processing (sbp) via split over sector_list
+ * *Enhancement*: Adding geoipserror class
+ * *Enhancement*: Obp interpolators update
+ * *Enhancement*: Obp cli updates
+ * *Enhancement*: Add workflow-domain exception classes
+ * *Enhancement*: Add output checker overrides to workflow-based commands
+ * *Enhancement*: Default coverage checkers when product encountered
+ * *Enhancement*: Add support for embedded workflow argument overrides
+ * *Enhancement*: Rename extra_plugins to extra_plugin_packages
+ * *Enhancement*: Obp-style scripting interface
+ * *Enhancement*: Implement datatree runtime for the order-based procflow
+ * *Enhancement*: Adding repr and str methods - #1503
+ * *Enhancement*: Add datatreeditto
+ * *Enhancement*: Add dask-based output_token provenance to workflow steps
+ * *Removal*: Remove module-level call() from order_based.py in favor of class-based orderbased
+ * *Removal*: Adding geoips_yaml_utils
+ * *Removal*: Remove geoips test script command
+ * *Removal*: Remove outputs field from steps
  * *Documentation*: Add release note for version 2.0.0a
  * *Documentation*: Update tagged versions
+ * *Documentation*: Add spec for obp datatrees
+ * *Documentation*: Add basic linting information
  * *Documentation*: Update ci infrastructure documentation
- * *Refactor*: Consolidate obp conduit registry and use lexeme for kind/interface names
- * *Refactor*: Route datatreeditto reverse conversion through the shared converter_registry
- * *Refactor*: Convert majority of module-based plugins to class-based
+ * *Documentation*: Update sphinx configuration and add support file creation utils for versioned docs
+ * *Documentation*: Update datatree spec implementation status and procflow interface docstring
  * *Continuous integration*: Ci image, test data and parallel test fixes
- * *Continuous integration*: Build the ci image with private plugins using a github token build secret
- * *Continuous integration*: Add self-hosted runner integration test workflow
  * *Continuous integration*: Disable plugin repos in ci with .github/ci-disabled-repos.yaml
  * *Continuous integration*: Add unit and integration tests for the datatree runtime
+ * *Continuous integration*: Add self-hosted runner integration test workflow
  * *Continuous integration*: Replace same-name branch checkouts with explicit dependency overrides
- * *Removal*: Adding geoips_yaml_utils
- * *Removal*: Remove module-level call() from order_based.py in favor of class-based orderbased
- * *Removal*: Remove outputs field from steps
- * *Removal*: Remove geoips test script command
- * *Test*: Add obp integration tests for workflow validation
+ * *Continuous integration*: Build the ci image with private plugins using a github token build secret
+ * *Refactor*: Route datatreeditto reverse conversion through the shared converter_registry
+ * *Refactor*: Convert majority of module-based plugins to class-based
+ * *Refactor*: Consolidate obp conduit registry and use lexeme for kind/interface names
  * *Testing*: Add test_data_sgli to nextcloud
  * *Installation*: Replace install shell scripts with ansible playbooks
+ * *Test*: Add obp integration tests for workflow validation
+
+Bug fix
+=======
+
+Reject unimplemented spec.defaults at validation instead of ignoring it
+-----------------------------------------------------------------------
+
+``WorkflowSpecModel.defaults`` (per-kind argument defaults) was accepted by
+the schema but never consumed by the runtime, so a spec that set it was
+silently ignored. A ``_reject_defaults`` validator now rejects it at
+validation with a clear message until the runtime wires it in, mirroring the
+existing ``_reject_retention_by_kind`` behavior. The related test and the
+``retention_by_kind`` field comment are updated to reflect the reject-until-
+wired behavior.
+
+::
+
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
+
+Allow arguments to be none on workflow-kind steps
+-------------------------------------------------
+
+``WorkflowStepDefinitionModel.arguments`` was typed ``Dict[str, Any]`` but
+``_ensure_xor_name_spec`` sets it to ``None`` for ``kind: workflow`` steps
+(which carry an inline ``spec`` instead). Newer pydantic rejects ``None`` for
+a non-optional dict field, breaking sub-workflow (and now split) steps. The
+field is now ``Dict[str, Any] | None``.
+
+::
+
+     modified: geoips/pydantic_models/v1/workflows.py
+
+Resolve expand steps python identifier processing
+-------------------------------------------------
+
+Ensure expand_steps sanitizes step IDs derived from product names
+
+::
+
+     added: docs/source/releases/latest/1452-fix-expand-steps-python-idnetifer-processing.yaml
+     added: geoips/plugins/yaml/workflows/tests/sgli_static_ir_rgb_imagery_clean.yaml
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: tests/unit_tests/pydantic_models/v1/workflows/test_workflows.py
+
+Fix geoips config create --all output and add field comments
+------------------------------------------------------------
+
+Switch to dumping the fully resolved config so the config
+file is complete and valid on reload. Also render the file with per-field
+comments as pulled from new schema field descriptions.
+
+An invalid .geoips.yaml now errors with a clear message.
+
+::
+
+     added: docs/source/releases/latest/fix-config-create-all-and-comments.yaml
+     modified: geoips/config/schema.py
+     modified: geoips/config/config.py
+     modified: geoips/config/plugins.py
+     modified: geoips/commandline/geoips_config.py
+     modified: tests/unit_tests/config/test_config.py
+     modified: tests/unit_tests/config/test_config_cli.py
+
+Hash-based cli instruction cache invalidation
+---------------------------------------------
+
+Cache CLI command instructions off a source content hash instead of mtime.
+mtime is problematic across checkouts and left a stale cache which created some issues.
+
+::
+
+     added: docs/source/releases/latest/fix-cli-instruction-cache.yaml
+     modified: geoips/utils/cache_files.py
+     modified: tests/unit_tests/utils/cache_files.py
+     modified: tests/unit_tests/commandline/test_get_commandline_instructions.py
+
+Stop workflows model reading os.environ at import
+-------------------------------------------------
+
+WorkflowPluginModel read GEOIPS_TESTDATA_DIR/GEOIPS_PACKAGES_DIR straight
+from os.environ at import time just for schema examples.
+This updates the workflow model to use geoips.config instead.
+
+::
+
+     added: docs/source/releases/latest/fix-workflows-env-at-import.yaml
+     modified: geoips/pydantic_models/v1/workflows.py
+
+Obp workflow implementation and validation improvements
+-------------------------------------------------------
+
+Resolves OBP workflow step errors and ensures correct data flow between workflow steps.
+
+::
+
+     deleted: geoips/plugins/yaml/workflows/tests/abi_static_infrared_annotated_enhanced.yaml
+     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_imagery_annotated_enhanced.yaml
+     modified: geoips/interfaces/class_based/filename_formatters.py
+     modified: geoips/interfaces/class_based/output_formatters.py
+     modified: geoips/plugins/yaml/workflows/tests/abi_static_infrared_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/abi_static_infrared_netcdf_geoips.yaml
+     modified: geoips/plugins/yaml/workflows/tests/abi_static_nasa_dust_rgb_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/abi_static_test_visible_logarithmic_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/abi_static_visible_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/ami_static_infrared_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/ami_static_mst_absdiff_ir_bd_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/ami_static_visible_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/fci_static_visible_imagery_annotated.yaml
+     modified: geoips/plugins/yaml/workflows/tests/gfs_static_waveheight_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/gfs_static_windspeed_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/mimic_coarse_static_tpw_cimss_imagery_annotated.yaml
+     modified: geoips/plugins/yaml/workflows/tests/mwr_tb165_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/mwr_tb180_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/mwr_tb325_15_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/mwr_tb50_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/mwr_tb89_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_airmass_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_convective_storms_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_summer_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_winter_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_day_solar_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_dust_rgb_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_natural_color_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_night_microphys_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_volcanic_ash_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_no_self_register_unprojected_image.yaml
+     modified: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_unprojected_image.yaml
+     modified: geoips/plugins/yaml/workflows/tests/viirs_static_visible_imagery_clean.yaml
+     modified: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_imagery_annotated.yaml
+     modified: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_unprojected_image.yaml
+     modified: geoips/plugins/yaml/workflows/tests/viirsday_global_night_vis_ir_cogeotiff_rgba.yaml
+     modified: geoips/pydantic_models/v1/workflows.py
+
+Give every abi reader a dont_autogen_geolocation setting
+--------------------------------------------------------
+
+``BaseAbiReaderPlugin.get_latitude_longitude`` reads
+``self.DONT_AUTOGEN_GEOLOCATION`` when no geolocation cache file exists for
+a sector, but only ``abi_netcdf`` defined it. ``abi_l2_netcdf`` failed with
+"AttributeError: 'AbiL2NetcdfReaderPlugin' object has no attribute
+'DONT_AUTOGEN_GEOLOCATION'" (geoips_nucaps' ``pyrocb_text_from_image.sh
+geojson abi`` test in NRLMMD-GEOIPS/geoips#1510). ``BaseAbiReaderPlugin`` now
+sets it from the ``DONT_AUTOGEN_GEOLOCATION`` environment variable, as
+``geostationary_geolocation`` already reads it, and readers can still
+override it.
+
+::
+
+     added: docs/source/releases/latest/abi-reader-autogen-default.yaml
+     added: tests/unit_tests/interfaces/class_based/test_readers.py
+     modified: geoips/interfaces/class_based/readers.py
+
+Logging files skipped by the class-based readers wrapper
+--------------------------------------------------------
+
+The class-based readers wrapper used to skip bad files without saying
+anything, which made empty pipeline runs hard to debug. Each skipped file
+is now logged at INFO with its filename and error, and one WARNING gives
+the total number of files skipped. If every file gets skipped, the
+`NoValidFilesError` message now lists the reasons for the first five files.
+`HritError` now takes optional `start_datetime` and `end_datetime` arguments,
+so the wrapper reads the times directly instead of parsing them out of the
+error message. The old parsing crashed with an `IndexError` on most
+`HritError` messages.
+
+`#1343 <https://github.com/NRLMMD-GEOIPS/geoips>`_
+
+::
+
+     added: docs/source/releases/latest/1343-bugfix-class-based-readers-wrapper-skips-files.yaml
+     added: tests/unit_tests/interfaces/class_based/test_readers_skip_logging.py
+     modified: geoips/interfaces/class_based/readers.py
+     modified: geoips/plugins/classes/readers/seviri_hrit.py
+     modified: geoips/plugins/classes/readers/utils/hrit_reader.py
+
+Fix order-based procflow reader path (dict -> datatree)
+-------------------------------------------------------
+
+Readers return the standard GeoIPS ``{key: xr.Dataset}`` dict, but this most
+common OBP path was broken in two ways that no test exercised. First,
+``BaseReaderPlugin._post_call`` used ``xr.*`` without importing xarray.
+Second, ``BaseClassPlugin._invoke`` early-returned when ``data is None`` (the
+reader case), so ``_post_call`` never ran and the ``dict -> DataTree`` merge
+was skipped, causing ``_attach_step_node`` to crash trying to wrap a raw dict.
+``_invoke`` now runs ``_post_call`` in the no-data branch, so reader output is
+merged into a ``DataTree`` end-to-end. A new integration test exercises the
+real dict-returning reader through the reader -> algorithm path.
+
+::
+
+     added: tests/integration_tests/test_obp_reader_path.py
+     modified: geoips/interfaces/class_based/readers.py
+     modified: geoips/interfaces/class_based_plugin.py
+
+Add title formatter to obp conduit
+----------------------------------
+
+If you added a title_formatter step to an order-based procflow workflow, the
+step would run and then its output would get thrown away. The output_formatter
+never knew about it, so it built its own title using default arguments instead.
+
+This connects the title_formatter step to the output_formatter. The formatted
+title now gets passed along as `preformatted_title_str`, and the imagery
+output_formatters use that string instead of making their own.
+
+All output_formatters in the `image_overlay` family now need to accept a
+`preformatted_title_str` argument. The four in GeoIPS have been updated, but
+any outside of GeoIPS will need the same argument added.
+
+`#1469 <https://github.com/NRLMMD-GEOIPS/geoips>`_
+
+::
+
+     added: docs/source/releases/latest/1469-add-title-formatter-to-obp-conduit.yaml
+     added: tests/unit_tests/utils/types/test_obp_conduits.py
+     modified: geoips/interfaces/class_based/output_formatters.py
+     modified: geoips/plugins/classes/output_formatters/full_disk_image.py
+     modified: geoips/plugins/classes/output_formatters/imagery_annotated.py
+     modified: geoips/plugins/classes/output_formatters/imagery_windbarbs.py
+     modified: geoips/plugins/classes/output_formatters/imagery_windbarbs_multi_level.py
+     modified: geoips/utils/types/obp_conduits.py
+     modified: tests/integration_tests/test_obp_family_conversions.py
+
+Fix workflowstepdefinitionmodel.name accepting none due to init=false
+---------------------------------------------------------------------
+
+The name field on WorkflowStepDefinitionModel was marked init=False with a
+default of None, causing the value supplied in the YAML to be silently
+dropped during construction. Validators that read model.name therefore
+always saw None. Removed init=False and made the typing explicitly nullable.
+
+::
+
+     modified: geoips/pydantic_models/v1/workflows.py
+
+Clean fortran repos before installing them
+------------------------------------------
+
+Some fortran repos need to be cleaned before installation. This causes errors in the ansible playbook which this branch
+fixes.
+
+::
+
+     modified: tests/ansible/roles/source_repos/tasks/main.yml
+
+Feature
+=======
+
+Add plugin_proivded as an additional default value in obp pydantic models
+-------------------------------------------------------------------------
+
+'This PR introduces a new default value called PLUGIN_PROVIDED that would help us to
+sanitize the workflow: drop the fields/arguments with the value = "PLUGIN_PROVIDED".
+This will make these fields omitted letting the call signature fill in the required
+default value.'
+
+Note-1: This is a breaking change.
+
+Note-2: If we do not specify the default value as "PLUGIN_PROVIDED" and set it to
+`None`, Pydantic-Python behavior will not allow the plugin-defined defaults to
+actually take effect.
+
+::
+
+     added: tests/unit_tests/plugins/modules/procflows/conftest.py
+     added: tests/unit_tests/plugins/modules/procflows/test_obp_utils.py
+     added: geoips/docs/source/releases/latest/update-dev-staging.yaml
+     added: geoips/plugins/modules/procflows/obp_utils.py
+     added: geoips/constants.py
+     modified: geoips/plugins/modules/procflows/order_based.py
+
+Implement split/join fan-out in the order-based procflow
+--------------------------------------------------------
+
+``split`` and ``join`` step kinds are now executed rather than raising
+NotImplementedError. A ``split`` step carries an inline body sub-workflow
+(``spec``) plus branch config in ``arguments`` (an explicit ``scopes`` list,
+or ``over: sector_list``); the body runs once per branch, nested under
+``/<split_id>/<scope>``. A ``join`` step re-collects the branches under a
+single node and records ``joined_scopes``. The ``scope`` field is re-enabled
+(no longer rejected at validation) as the branch label, and the schema accepts
+a ``split`` step's inline ``spec`` + branch ``arguments``. Seeded
+sub-workflows now correctly pass their pre-loaded input to a first
+(``depends_on: []``) step.
+
+::
+
+     added: tests/integration_tests/test_obp_split_join.py
+     modified: geoips/interfaces/class_based/workflow.py
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: tests/unit_tests/interfaces/class_based/test_workflow.py
+     modified: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
+
+Allow plugin packages to register configuration options
+-------------------------------------------------------
+
+External GeoIPS plugin packages can now register their own configuration
+settings via the new ``geoips.config_plugins`` entry-point group. Each
+package exposes a ``geoips.config.ConfigPlugin`` wrapping a pydantic
+settings model.
+
+Plugin settings participate in the standard layered precedence
+(defaults > .geoips.yaml under ``geoips.plugins.<pkg>`` > auto-generated
+``GEOIPS_PLUGIN_<PKG>_<FIELD>`` environment variables), are accessed via
+``config.plugins.<pkg>``, and are included by ``geoips config create``
+(with per-plugin header and per-field default comments under ``--all``).
+``geoips config validate`` validates plugin sections and warns on unknown
+settings. Discovery and per-plugin validation are lazy so a misconfigured
+plugin cannot break importing ``geoips.config``.
+
+::
+
+     added: docs/source/releases/latest/add-plugin-config-registration.yaml
+     added: geoips/config/plugins.py
+     added: tests/unit_tests/config/test_plugins.py
+     added: tests/unit_tests/config/test_config_cli.py
+     modified: geoips/config/__init__.py
+     modified: geoips/config/config.py
+     modified: geoips/errors.py
+     modified: geoips/commandline/geoips_config.py
+     modified: tests/unit_tests/config/test_env_map_sync.py
+     modified: docs/source/concepts/configuration/index.rst
+
+Order-based procflow: add filename formatter pydantic models
+------------------------------------------------------------
+
+Introduce Pydantic model defining and validating OBP-v1 FilenameFormatterArgumentsModel
+
+::
+
+     added: docs/source/releases/latest/1323-add-filename-formatter-pydantic-model.yaml
+     added: tests/unit_tests/pydantic_models/v1/filename_formatters/test_cases_bad.yaml
+     added: tests/unit_tests/pydantic_models/v1/filename_formatters/test_cases_good.yaml
+     added: tests/unit_tests/pydantic_models/v1/filename_formatters/test_cases_neutral.yaml
+     modified: docs/dev/order_based_procflow.rst
+     modified: geoips/plugins/modules/filename_formatters/geoips_netcdf_fname.py
+     modified: geoips/pydantic_models/v1/filename_formatters.py
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: tests/unit_tests/pydantic_models/v1/conftest.py
+     modified: tests/unit_tests/pydantic_models/v1/test_pydantic_models.py
+
+Introduce order-based procflow workflows
+----------------------------------------
+
+NO DESCRIPTION
+
+::
+
+     deleted: geoips/plugins/yaml/workflows/unit_tests/abi-static-infrared-imagery-annotated-enhanced.yaml
+     added: docs/source/releases/latest/1452-fix-expand-steps-python-idnetifer-processing.yaml
+     added: docs/source/releases/latest/1455-introduce-order-based-procflow-workflows.yaml
+     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_annotated_enhanced.yaml
+     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_netcdf_geoips.yaml
+     added: geoips/plugins/yaml/workflows/tests/abi_static_nasa_dust_rgb_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/abi_static_test_visible_logarithmic_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/abi_static_visible_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/ami_static_infrared_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/ami_static_mst_absdiff_ir_bd_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/ami_static_visible_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/ewsg_static_infrared_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/fci_static_visible_imagery_annotated.yaml
+     added: geoips/plugins/yaml/workflows/tests/gfs_static_waveheight_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/gfs_static_windspeed_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/mimic_coarse_static_tpw_cimss_imagery_annotated.yaml
+     added: geoips/plugins/yaml/workflows/tests/mwr_tb165_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/mwr_tb180_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/mwr_tb325_15_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/mwr_tb50_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/mwr_tb89_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_airmass_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_convective_storms_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_summer_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_winter_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_day_solar_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_natural_color_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_night_microphys_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_volcanic_ash_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_no_self_register_unprojected_image.yaml
+     added: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_unprojected_image.yaml
+     added: geoips/plugins/yaml/workflows/tests/sgli_static_ir_rgb_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/smap_awips_netcdf.yaml
+     added: geoips/plugins/yaml/workflows/tests/smap_unsectored_text_winds.yaml
+     added: geoips/plugins/yaml/workflows/tests/viirs_static_visible_imagery_clean.yaml
+     added: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_imagery_annotated.yaml
+     added: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_unprojected_image.yaml
+     added: geoips/plugins/yaml/workflows/tests/viirsday_global_night_vis_ir_cogeotiff_rgba.yaml
+     modified: docs/dev/order_based_procflow.rst
+     modified: geoips/plugins/yaml/products/ami.yaml
+     modified: geoips/plugins/yaml/products/seviri.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: tests/unit_tests/pydantic_models/v1/workflows/test_workflows.py
+
+Add yaml-based configuration system that replaces base_paths.py
+---------------------------------------------------------------
+
+Introduces a new ``geoips.config`` module with a layered YAML-based
+configuration system with pydantic-validated settings. Configuration is
+resolved with priority: environment variables > project-level .geoips.yaml
+> code defaults.
+
+The new system replaces the imperative ``PATHS`` dictionary in
+``geoips/filenames/base_paths.py``, which is now a shim
+with deprecation warnings. All existing imports and dict-style access
+continue to work unchanged.
+
+::
+
+     added: docs/source/releases/latest/add-layered-yaml-config-system.yaml
+     added: geoips/config/__init__.py
+     added: geoips/config/config.py
+     added: geoips/config/schema.py
+     added: geoips/config/yaml_loader.py
+     added: tests/unit_tests/config/__init__.py
+     added: tests/unit_tests/config/test_config.py
+     added: tests/unit_tests/config/test_schema.py
+     added: tests/unit_tests/config/test_yaml_loader.py
+     added: tests/unit_tests/config/test_env_map_sync.py
+     modified: geoips/filenames/base_paths.py
+     modified: docs/source/concepts/configuration/index.rst
+
+Add colormapper pydantic model
+------------------------------
+
+Introduce Pydantic model defining and validating OBP-v1 ColormapperArgumentsModel
+
+::
+
+     added: docs/source/releases/latest/1336-add-colomapper-pydantic-model.yaml
+     added: tests/unit_tests/pydantic_models/v1/colormappers/test_cases_bad.yaml
+     added: tests/unit_tests/pydantic_models/v1/colormappers/test_cases_good.yaml
+     added: tests/unit_tests/pydantic_models/v1/colormappers/test_cases_neutral.yaml
+     modified: docs/dev/order_based_procflow.rst
+     modified: geoips/pydantic_models/v1/colormappers.py
+     modified: tests/unit_tests/pydantic_models/v1/conftest.py
+     modified: tests/unit_tests/pydantic_models/v1/test_pydantic_models.py
+
+Order-based procflow: add output formatters
+-------------------------------------------
+
+Introduce Pydantic model defining and validating OBP-v1 OutputFormatterArgumentsModel
+
+::
+
+     added: docs/source/releases/latest/1279-OBP-add-output-formatters.yaml
+     added: tests/unit_tests/pydantic_models/v1/output_formatters/test_cases_bad.yaml
+     added: tests/unit_tests/pydantic_models/v1/output_formatters/test_cases_good.yaml
+     added: tests/unit_tests/pydantic_models/v1/output_formatters/test_cases_neutral.yaml
+     modified: docs/dev/order_based_procflow.rst
+     modified: geoips/pydantic_models/v1/output_formatters.py
+     modified: tests/unit_tests/pydantic_models/v1/conftest.py
+     modified: tests/unit_tests/pydantic_models/v1/test_pydantic_models.py
+     modified: geoips/plugins/yaml/workflows/read_test_v1.yaml
+
+Static multi-sector processing (sbp) via split over sector_list
+---------------------------------------------------------------
+
+The order-based procflow can now produce output for multiple static sectors
+in a single run. A ``split`` step with ``over: sector_list`` resolves each
+static sector in ``globals.sector_list`` to an ``AreaDefinition`` (making the
+previously dead ``Workflow._resolve_area_defs`` live) and runs its inline body
+sub-workflow once per sector. Each branch's ``AreaDefinition`` is seeded into
+the branch input so the body's steps receive it as ``area_def`` through the
+standard conduit mechanism. Dynamic sectors remain out of scope.
+
+::
+
+     added: tests/integration_tests/test_obp_sectoring.py
+     modified: geoips/interfaces/class_based/workflow.py
 
 Enhancement
 ===========
-
-Add support for embedded workflow argument overrides
-----------------------------------------------------
-
-Adds support for argument overrides to steps in an embedded workflow. Additionally,
-added logic to handle 'depends_on' fields for embedded workflows. This way you
-can specify depends on to the outer workflow, and the first data step of the
-embedded workflow must add a depends_on field using [_input] * len(outer_dependencies)
-to make sure data is passed appropriately to the first data step.
-
-::
-
-     modified: geoips/interfaces/class_based/workflow.py
-     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/ABI-Infrared.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/AHI-Infrared.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/Infrared-Base.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/VIIRS-Infrared.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/output-imagery-annotated.yaml
-     modified: geoips/pydantic_models/v1/workflows.py
-
-Implement datatree runtime for the order-based procflow
--------------------------------------------------------
-
-Add a DataTree-backed runtime for the order-based procflow (OBP). Workflow
-execution now produces an xr.DataTree with per-step nodes carrying provenance
-attrs (output_token, plugin_name, plugin_kind, gc_status). The Workflow
-composite class uses a Strategy-pattern RetentionPolicy and Kahn's topological
-sort for step ordering. New pydantic schema fields (depends_on, keep, outputs,
-retention, defaults) are validated with cycle detection and dangling-output
-checking. The OrderBased procflow is now a class-based plugin accepting
-WorkflowPluginModel, WorkflowSpecModel, or dict inputs.
-
-::
-
-     added: geoips/interfaces/class_based/workflow.py
-     added: geoips/utils/types/datatree_converters.py
-     added: geoips/utils/types/tokenization.py
-     added: geoips/utils/types/__init__.py
-     modified: geoips/interfaces/class_based_plugin.py
-     modified: geoips/interfaces/class_based/algorithms.py
-     modified: geoips/interfaces/class_based/interpolators.py
-     modified: geoips/interfaces/class_based/output_formatters.py
-     modified: geoips/interfaces/class_based/filename_formatters.py
-     modified: geoips/interfaces/class_based/coverage_checkers.py
-     modified: geoips/interfaces/class_based/output_checkers.py
-     modified: geoips/interfaces/class_based/title_formatters.py
-     modified: geoips/interfaces/class_based/sector_adjusters.py
-     modified: geoips/interfaces/class_based/sector_spec_generators.py
-     modified: geoips/interfaces/class_based/sector_metadata_generators.py
-     modified: geoips/interfaces/class_based/databases.py
-     modified: geoips/interfaces/class_based/readers.py
-     modified: geoips/interfaces/class_based/colormappers.py
-     modified: geoips/interfaces/class_based/procflows.py
-     modified: geoips/plugins/modules/procflows/order_based.py
-     modified: geoips/commandline/geoips_run.py
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: geoips/utils/types/datatree_ditto.py
-     modified: geoips/plugins/yaml/workflows/read_test_v1.yaml
-     modified: geoips/plugins/yaml/workflows/read_test_v1_coverage_checker.yaml
-     modified: geoips/plugins/yaml/workflows/read_test_interpolator_v1.yaml
-     modified: geoips/plugins/yaml/workflows/visir/Infrared.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_workflow.yaml
-     modified: geoips/plugins/yaml/workflows/geostationary_dmw/windbarbs_dmw_high.yaml
 
 Adding geoipserror class
 ------------------------
@@ -142,37 +552,88 @@ intentionally left unchanged pending a separate scope conversation; also folds i
      modified: geoips/utils/yaml_utils.py
      modified: geoips/errors.py
 
-Obp-style scripting interface
------------------------------
+Obp interpolators update
+------------------------
 
-Add an OBP-Style scripting interface. This provides a number of user-facing convenience
-functions and updates the plugins to handle appropriate data retention policies.
-
-Also added new tests as well as some example scripts.
+Adds support for inserting interpolator steps in a workflow plugin. If an
+interpolator step is specified, it MUST depend on two other steps, one of which
+must be a data source, and the other must be a sector. This way it can accurately
+interpolate data from that source to that sector.
 
 ::
 
-     added: docs/dev/obp_script_plugin_calls.md
-     added: docs/dev/script_datatree_developer_notes.md
-     added: docs/source/releases/latest/obp-based-scripting.yaml
-     added: geoips/scripting.py
-     added: geoips/utils/types/datatree_helpers.py
-     added: geoips/utils/types/script_datatree.py
-     added: tests/example_scripts/obp_scripting/verify_script_abi_infrared_output.py
-     added: tests/example_scripts/obp_scripting/verify_script_manual_difference_output.py
-     added: tests/example_scripts/obp_scripting/verify_script_reader.py
-     added: tests/example_scripts/obp_scripting/verify_script_reader_manipulation.py
-     added: tests/unit_tests/test_scripting.py
-     added: tests/unit_tests/utils/types/test_script_datatree.py
-     modified: geoips/interfaces/class_based/algorithms.py
-     modified: geoips/interfaces/class_based/coverage_checkers.py
-     modified: geoips/interfaces/class_based/filename_formatters.py
-     modified: geoips/interfaces/class_based/interpolators.py
+     moved: geoips/plugins/yaml/workflows/unit_tests/full_run.yaml ->
+     geoips/plugins/yaml/workflows/unit_tests/Infrared.yaml
+     added: geoips/plugins/yaml/workflows/unit_tests/Visible.yaml
+     modified: docs/source/releases/latest/obp-interpolators-update.yaml
+     modified: geoips/interfaces/class_based/workflow.py
      modified: geoips/interfaces/class_based_plugin.py
-     modified: geoips/utils/types/obp_conduits.py
-     modified: tests/integration_tests/test_integration.py
+     modified: geoips/plugins/modules/algorithms/single_channel.py
+     modified: geoips/plugins/modules/interpolators/pyresample_wrappers/interp_gauss.py
+     modified: geoips/plugins/modules/interpolators/pyresample_wrappers/interp_nearest.py
+     modified: geoips/plugins/modules/procflows/order_based.py
+     modified: geoips/plugins/modules/procflows/single_source.py
+     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/Visible.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/dmw_high.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/output_checker.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
+     modified: geoips/pydantic_models/v1/bases.py
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: geoips/utils/types/converters.py
+     modified: tests/unit_tests/interfaces/class_based/test_workflow.py
      modified: tests/unit_tests/interfaces/test_class_based_plugin_invoke.py
-     modified: tests/unit_tests/xarray_utils/test_coords.py
+     modified: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
+     modified: tests/unit_tests/utils/types/test_datatree_converters.py
+
+Obp cli updates
+---------------
+
+Updates to v1 workflow models and 'geoips run order_based <workflow_name>' /
+'geoips test workflow <workflow_name>' CLI commands. Updates include refactoring
+the 'test' section of a workflow and adding support for overrides in workflow
+plugins. These can be specified in the test section of a workflow or at the command
+line via '-[Ss]', '-[Kk]', '-[Gg]' flags via the 'geoips run order_based' command.
+In order to apply overrides, GeoIPS will fully expand a workflow plugin, replace
+relevant portions of the workflow with the contents specified as an override, then
+revalidate the modified workflow.
+
+Added documentation and fixed failing unit tests as well. New unit tests to come for
+new functionality added.
+
+::
+
+     modified: docs/dev/running_order_based_procflow.rst
+     modified: docs/source/concepts/functionality/command-line/index.rst
+     modified: geoips/commandline/ancillary_info/cmd_instructions.yaml
+     modified: geoips/commandline/geoips_command.py
+     modified: geoips/commandline/geoips_run.py
+     modified: geoips/commandline/geoips_test.py
+     modified: geoips/interfaces/class_based_plugin.py
+     modified: geoips/interfaces/yaml_based/workflows.py
+     modified: geoips/plugins/modules/procflows/order_based.py
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_bad_test_section.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
+     modified: geoips/pydantic_models/v1/output_checkers.py
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: tests/unit_tests/commandline/test_geoips_run.py
+     modified: tests/unit_tests/commandline/test_geoips_test_workflow.py
+     modified: tests/unit_tests/pydantic_models/v1/output_checkers/test_cases_bad.yaml
+     modified: tests/unit_tests/pydantic_models/v1/utils.py
+
+Add workflow-domain exception classes
+-------------------------------------
+
+Add six typed exceptions for order-based-procflow workflow operations,
+all subclassing GeoipsError: WorkflowSpecError, PluginResolutionError,
+DependencyCycleError, DataTreeSchemaError,
+RetentionConfigError, and BoundaryIOError.
+
+`#1309 <https://github.com/NRLMMD-GEOIPS/geoips>`_
+
+::
+
+     modified: geoips/errors.py
 
 Add output checker overrides to workflow-based commands
 -------------------------------------------------------
@@ -322,40 +783,167 @@ Take the following workflow.
      modified: tests/unit_tests/interfaces/class_based/test_workflow.py
      modified: tests/unit_tests/plugins/yaml/workflows/test_workflow_overrides.py
 
-Obp cli updates
----------------
+Default coverage checkers when product encountered
+--------------------------------------------------
 
-Updates to v1 workflow models and 'geoips run order_based <workflow_name>' /
-'geoips test workflow <workflow_name>' CLI commands. Updates include refactoring
-the 'test' section of a workflow and adding support for overrides in workflow
-plugins. These can be specified in the test section of a workflow or at the command
-line via '-[Ss]', '-[Kk]', '-[Gg]' flags via the 'geoips run order_based' command.
-In order to apply overrides, GeoIPS will fully expand a workflow plugin, replace
-relevant portions of the workflow with the contents specified as an override, then
-revalidate the modified workflow.
-
-Added documentation and fixed failing unit tests as well. New unit tests to come for
-new functionality added.
+Any time a product is encountered as a step in a workflow, fully expand that product
+as a nested series of steps in the original workflow, then add a coverage checker as
+the final step of the product nested steps if it doesn't already exist as a step.
+Use the masked arrays coverage checker in this case and set minimum coverage to 10.
 
 ::
 
-     modified: docs/dev/running_order_based_procflow.rst
-     modified: docs/source/concepts/functionality/command-line/index.rst
-     modified: geoips/commandline/ancillary_info/cmd_instructions.yaml
-     modified: geoips/commandline/geoips_command.py
-     modified: geoips/commandline/geoips_run.py
-     modified: geoips/commandline/geoips_test.py
-     modified: geoips/interfaces/class_based_plugin.py
-     modified: geoips/interfaces/yaml_based/workflows.py
-     modified: geoips/plugins/modules/procflows/order_based.py
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_bad_test_section.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
-     modified: geoips/pydantic_models/v1/output_checkers.py
      modified: geoips/pydantic_models/v1/workflows.py
-     modified: tests/unit_tests/commandline/test_geoips_run.py
-     modified: tests/unit_tests/commandline/test_geoips_test_workflow.py
-     modified: tests/unit_tests/pydantic_models/v1/output_checkers/test_cases_bad.yaml
-     modified: tests/unit_tests/pydantic_models/v1/utils.py
+     modified: geoips/interfaces/class_based/coverage_checkers.py
+
+Add support for embedded workflow argument overrides
+----------------------------------------------------
+
+Adds support for argument overrides to steps in an embedded workflow. Additionally,
+added logic to handle 'depends_on' fields for embedded workflows. This way you
+can specify depends on to the outer workflow, and the first data step of the
+embedded workflow must add a depends_on field using [_input] * len(outer_dependencies)
+to make sure data is passed appropriately to the first data step.
+
+::
+
+     modified: geoips/interfaces/class_based/workflow.py
+     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/ABI-Infrared.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/AHI-Infrared.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/Infrared-Base.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/VIIRS-Infrared.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared/output-imagery-annotated.yaml
+     modified: geoips/pydantic_models/v1/workflows.py
+
+Rename extra_plugins to extra_plugin_packages
+---------------------------------------------
+
+Rename the ansible variable extra_plugins to extra_plugin_packages to clarify
+that it installs plugin packages rather than individual plugins.
+
+::
+
+     modified: tests/ansible/inventory/local.yml
+     modified: tests/ansible/playbooks/install.yml
+     modified: tests/ansible/roles/source_repos/defaults/main.yml
+     modified: tests/ansible/roles/source_repos/tasks/main.yml
+     modified: tests/ansible/README.md
+     modified: Makefile
+     modified: docs/source/concepts/architecture/ci-infrastructure.rst
+
+Obp-style scripting interface
+-----------------------------
+
+Add an OBP-Style scripting interface. This provides a number of user-facing convenience
+functions and updates the plugins to handle appropriate data retention policies.
+
+Also added new tests as well as some example scripts.
+
+::
+
+     added: docs/dev/obp_script_plugin_calls.md
+     added: docs/dev/script_datatree_developer_notes.md
+     added: docs/source/releases/latest/obp-based-scripting.yaml
+     added: geoips/scripting.py
+     added: geoips/utils/types/datatree_helpers.py
+     added: geoips/utils/types/script_datatree.py
+     added: tests/example_scripts/obp_scripting/verify_script_abi_infrared_output.py
+     added: tests/example_scripts/obp_scripting/verify_script_manual_difference_output.py
+     added: tests/example_scripts/obp_scripting/verify_script_reader.py
+     added: tests/example_scripts/obp_scripting/verify_script_reader_manipulation.py
+     added: tests/unit_tests/test_scripting.py
+     added: tests/unit_tests/utils/types/test_script_datatree.py
+     modified: geoips/interfaces/class_based/algorithms.py
+     modified: geoips/interfaces/class_based/coverage_checkers.py
+     modified: geoips/interfaces/class_based/filename_formatters.py
+     modified: geoips/interfaces/class_based/interpolators.py
+     modified: geoips/interfaces/class_based_plugin.py
+     modified: geoips/utils/types/obp_conduits.py
+     modified: tests/integration_tests/test_integration.py
+     modified: tests/unit_tests/interfaces/test_class_based_plugin_invoke.py
+     modified: tests/unit_tests/xarray_utils/test_coords.py
+
+Implement datatree runtime for the order-based procflow
+-------------------------------------------------------
+
+Add a DataTree-backed runtime for the order-based procflow (OBP). Workflow
+execution now produces an xr.DataTree with per-step nodes carrying provenance
+attrs (output_token, plugin_name, plugin_kind, gc_status). The Workflow
+composite class uses a Strategy-pattern RetentionPolicy and Kahn's topological
+sort for step ordering. New pydantic schema fields (depends_on, keep, outputs,
+retention, defaults) are validated with cycle detection and dangling-output
+checking. The OrderBased procflow is now a class-based plugin accepting
+WorkflowPluginModel, WorkflowSpecModel, or dict inputs.
+
+::
+
+     added: geoips/interfaces/class_based/workflow.py
+     added: geoips/utils/types/datatree_converters.py
+     added: geoips/utils/types/tokenization.py
+     added: geoips/utils/types/__init__.py
+     modified: geoips/interfaces/class_based_plugin.py
+     modified: geoips/interfaces/class_based/algorithms.py
+     modified: geoips/interfaces/class_based/interpolators.py
+     modified: geoips/interfaces/class_based/output_formatters.py
+     modified: geoips/interfaces/class_based/filename_formatters.py
+     modified: geoips/interfaces/class_based/coverage_checkers.py
+     modified: geoips/interfaces/class_based/output_checkers.py
+     modified: geoips/interfaces/class_based/title_formatters.py
+     modified: geoips/interfaces/class_based/sector_adjusters.py
+     modified: geoips/interfaces/class_based/sector_spec_generators.py
+     modified: geoips/interfaces/class_based/sector_metadata_generators.py
+     modified: geoips/interfaces/class_based/databases.py
+     modified: geoips/interfaces/class_based/readers.py
+     modified: geoips/interfaces/class_based/colormappers.py
+     modified: geoips/interfaces/class_based/procflows.py
+     modified: geoips/plugins/modules/procflows/order_based.py
+     modified: geoips/commandline/geoips_run.py
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: geoips/utils/types/datatree_ditto.py
+     modified: geoips/plugins/yaml/workflows/read_test_v1.yaml
+     modified: geoips/plugins/yaml/workflows/read_test_v1_coverage_checker.yaml
+     modified: geoips/plugins/yaml/workflows/read_test_interpolator_v1.yaml
+     modified: geoips/plugins/yaml/workflows/visir/Infrared.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_workflow.yaml
+     modified: geoips/plugins/yaml/workflows/geostationary_dmw/windbarbs_dmw_high.yaml
+
+Adding repr and str methods - #1503
+-----------------------------------
+
+Class-based plugins used to print as `<...Plugin object at 0x...>`, which didn't tell you
+anything. They now print something useful.
+
+Before:
+
+    >>> readers.get_plugin("abi_netcdf")
+    <geoips.plugins.classes.readers.abi_netcdf.AbiNetcdfReaderPlugin object at 0x7f3c1a2b4d90>
+
+After:
+
+    >>> readers.get_plugin("abi_netcdf")
+    AbiNetcdfReaderPlugin(interface='readers', module_name='geoips.plugins.classes.readers.abi_netcdf',
+    name='abi_netcdf', package='geoips')
+
+    >>> print(readers.get_plugin("abi_netcdf"))
+    abi_netcdf (readers plugin from geoips)
+
+A few notes:
+
+* The package comes from the plugin's module name. A plugin made directly without a
+  module shows `package='UnnamedModule'`.
+* `family` is left out since it's on its way out.
+* The YAML plugin side is in NRLMMD-GEOIPS/pluginify#33. It adds a matching `__str__`.
+  The two PRs don't depend on each other.
+
+Added tests in `tests/unit_tests/interfaces/test_class_based_plugin_repr_str.py`.
+
+`#424 <https://github.com/NRLMMD-GEOIPS/geoips>`_
+
+::
+
+     added: tests/unit_tests/interfaces/test_class_based_plugin_repr_str.py
+     added: docs/source/releases/latest/424-adding-repr-and-str-methods.yaml
+     modified: geoips/interfaces/class_based_plugin.py
 
 Add datatreeditto
 -----------------
@@ -426,53 +1014,6 @@ should ultimately be phased out.
      modified: tests/integration_tests/test_tiny_sectors_geoips.py
      modified: tests/utils/check_code.sh
 
-Obp interpolators update
-------------------------
-
-Adds support for inserting interpolator steps in a workflow plugin. If an
-interpolator step is specified, it MUST depend on two other steps, one of which
-must be a data source, and the other must be a sector. This way it can accurately
-interpolate data from that source to that sector.
-
-::
-
-     moved: geoips/plugins/yaml/workflows/unit_tests/full_run.yaml ->
-     geoips/plugins/yaml/workflows/unit_tests/Infrared.yaml
-     added: geoips/plugins/yaml/workflows/unit_tests/Visible.yaml
-     modified: docs/source/releases/latest/obp-interpolators-update.yaml
-     modified: geoips/interfaces/class_based/workflow.py
-     modified: geoips/interfaces/class_based_plugin.py
-     modified: geoips/plugins/modules/algorithms/single_channel.py
-     modified: geoips/plugins/modules/interpolators/pyresample_wrappers/interp_gauss.py
-     modified: geoips/plugins/modules/interpolators/pyresample_wrappers/interp_nearest.py
-     modified: geoips/plugins/modules/procflows/order_based.py
-     modified: geoips/plugins/modules/procflows/single_source.py
-     modified: geoips/plugins/yaml/workflows/unit_tests/Infrared.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/Visible.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/dmw_high.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/output_checker.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
-     modified: geoips/pydantic_models/v1/bases.py
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: geoips/utils/types/converters.py
-     modified: tests/unit_tests/interfaces/class_based/test_workflow.py
-     modified: tests/unit_tests/interfaces/test_class_based_plugin_invoke.py
-     modified: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
-     modified: tests/unit_tests/utils/types/test_datatree_converters.py
-
-Default coverage checkers when product encountered
---------------------------------------------------
-
-Any time a product is encountered as a step in a workflow, fully expand that product
-as a nested series of steps in the original workflow, then add a coverage checker as
-the final step of the product nested steps if it doesn't already exist as a step.
-Use the masked arrays coverage checker in this case and set minimum coverage to 10.
-
-::
-
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: geoips/interfaces/class_based/coverage_checkers.py
-
 Add dask-based output_token provenance to workflow steps
 --------------------------------------------------------
 
@@ -488,496 +1029,138 @@ not halt the workflow.
      added: geoips/utils/types/tokenization.py
      modified: geoips/interfaces/class_based/workflow.py
 
-Add workflow-domain exception classes
--------------------------------------
+Removal
+=======
 
-Add six typed exceptions for order-based-procflow workflow operations,
-all subclassing GeoipsError: WorkflowSpecError, PluginResolutionError,
-DependencyCycleError, DataTreeSchemaError,
-RetentionConfigError, and BoundaryIOError.
+Remove module-level call() from order_based.py in favor of class-based orderbased
+---------------------------------------------------------------------------------
 
-`#1309 <https://github.com/NRLMMD-GEOIPS/geoips>`_
+The module-level call(workflow, fnames, command_line_args) function in
+geoips.plugins.modules.procflows.order_based has been removed. The procflow
+is now a class-based OrderBased(BaseProcflowPlugin) plugin. External callers
+that imported this function directly must now resolve through the procflows
+registry: interfaces.procflows.get_plugin("order_based")(workflow_spec,
+fnames=fnames). The CLI (geoips run order_based) is unchanged from a user
+perspective.
 
 ::
 
+     modified: geoips/plugins/modules/procflows/order_based.py
+     modified: geoips/commandline/geoips_run.py
+
+Adding geoips_yaml_utils
+------------------------
+
+This PR adds the dependency package geoips_yaml_utils, which is a wrapper
+around PyYAML and a replacement for pyaml-env. This also means that
+geoips.utils.yaml_utils and the related test package in tests/unit_tests/
+needs to be removed as the logic was migrated to geoips_yaml_utils and is
+no longer needed here.
+
+`#1382 <https://github.com/NRLMMD-GEOIPS/geoips>`_
+
+::
+
+     deleted: geoips/utils/yaml_utils.py
+     deleted: tests/unit_tests/utils/test_yaml_utils.py
+     added: docs/source/releases/latest/1382-import-geoips_yaml_utils.yaml
+     modified: pyproject.toml
+     modified: geoips/commandline/cmd_instructions.py
+     modified: geoips/commandline/geoips_command.py
+     modified: geoips/commandline/geoips_describe.py
+     modified: geoips/commandline/geoips_run.py
+     modified: geoips/commandline/geoips_validate.py
+     modified: geoips/interfaces/base.py
+     modified: geoips/plugins/modules/procflows/config_based.py
+     modified: geoips/pydantic_models/v1/products.py
+     modified: geoips/sector_utils/yaml_utils.py
+     modified: geoips/utils/memusg/dataframe_utils.py
+     modified: geoips/utils/cache_files.py
+     modified: docs/source/contribute/coding-standards.rst
      modified: geoips/errors.py
 
-Rename extra_plugins to extra_plugin_packages
----------------------------------------------
+Remove geoips test script command
+---------------------------------
 
-Rename the ansible variable extra_plugins to extra_plugin_packages to clarify
-that it installs plugin packages rather than individual plugins.
-
-::
-
-     modified: tests/ansible/inventory/local.yml
-     modified: tests/ansible/playbooks/install.yml
-     modified: tests/ansible/roles/source_repos/defaults/main.yml
-     modified: tests/ansible/roles/source_repos/tasks/main.yml
-     modified: tests/ansible/README.md
-     modified: Makefile
-     modified: docs/source/concepts/architecture/ci-infrastructure.rst
-
-Bug fix
-=======
-
-Clean fortran repos before installing them
-------------------------------------------
-
-Some fortran repos need to be cleaned before installation. This causes errors in the ansible playbook which this branch
-fixes.
+Removed 'geoips test script' command. Includes removal of the command itself, it's
+help info, and the unit test code for that command. Removing as it is unused and
+causes quite the pain for our CI.
 
 ::
 
-     modified: tests/ansible/roles/source_repos/tasks/main.yml
+     deleted: tests/unit_tests/commandline/test_geoips_test_script.py
+     modified: geoips/commandline/ancillary_info/cmd_instructions.py
+     modified: geoips/commandline/geoips_test.py
+     modified: tests/unit_tests/commandline/cli_top_level_tester.py
 
-Give every abi reader a dont_autogen_geolocation setting
---------------------------------------------------------
+Remove outputs field from steps
+-------------------------------
 
-``BaseAbiReaderPlugin.get_latitude_longitude`` reads
-``self.DONT_AUTOGEN_GEOLOCATION`` when no geolocation cache file exists for
-a sector, but only ``abi_netcdf`` defined it. ``abi_l2_netcdf`` failed with
-"AttributeError: 'AbiL2NetcdfReaderPlugin' object has no attribute
-'DONT_AUTOGEN_GEOLOCATION'" (geoips_nucaps' ``pyrocb_text_from_image.sh
-geojson abi`` test in NRLMMD-GEOIPS/geoips#1510). ``BaseAbiReaderPlugin`` now
-sets it from the ``DONT_AUTOGEN_GEOLOCATION`` environment variable, as
-``geostationary_geolocation`` already reads it, and readers can still
-override it.
+The functionality provided by the `outputs` field in workflow steps has
+been superseeded by expanded use of `depends_on`. This PR removes all
+remaining references to `outputs`.
 
 ::
 
-     added: docs/source/releases/latest/abi-reader-autogen-default.yaml
-     added: tests/unit_tests/interfaces/class_based/test_readers.py
-     modified: geoips/interfaces/class_based/readers.py
-
-Reject unimplemented spec.defaults at validation instead of ignoring it
------------------------------------------------------------------------
-
-``WorkflowSpecModel.defaults`` (per-kind argument defaults) was accepted by
-the schema but never consumed by the runtime, so a spec that set it was
-silently ignored. A ``_reject_defaults`` validator now rejects it at
-validation with a clear message until the runtime wires it in, mirroring the
-existing ``_reject_retention_by_kind`` behavior. The related test and the
-``retention_by_kind`` field comment are updated to reflect the reject-until-
-wired behavior.
-
-::
-
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
-
-Hash-based cli instruction cache invalidation
----------------------------------------------
-
-Cache CLI command instructions off a source content hash instead of mtime.
-mtime is problematic across checkouts and left a stale cache which created some issues.
-
-::
-
-     added: docs/source/releases/latest/fix-cli-instruction-cache.yaml
-     modified: geoips/utils/cache_files.py
-     modified: tests/unit_tests/utils/cache_files.py
-     modified: tests/unit_tests/commandline/test_get_commandline_instructions.py
-
-Fix geoips config create --all output and add field comments
-------------------------------------------------------------
-
-Switch to dumping the fully resolved config so the config
-file is complete and valid on reload. Also render the file with per-field
-comments as pulled from new schema field descriptions.
-
-An invalid .geoips.yaml now errors with a clear message.
-
-::
-
-     added: docs/source/releases/latest/fix-config-create-all-and-comments.yaml
-     modified: geoips/config/schema.py
+     added: geoips/plugins/yaml/workflows/abi_infrared_test.yaml
+     modified: docs/dev/datatree-spec.md
+     modified: docs/source/releases/latest/geoips-obp-output-checker-overrides.yaml
+     modified: docs/source/releases/latest/workflow-domain-exceptions.yaml
+     modified: environments/requirements.txt
+     modified: geoips/commandline/geoips_test.py
      modified: geoips/config/config.py
-     modified: geoips/config/plugins.py
-     modified: geoips/commandline/geoips_config.py
+     modified: geoips/config/yaml_loader.py
+     modified: geoips/errors.py
+     modified: geoips/plugins/modules/procflows/config_based.py
+     modified: geoips/plugins/modules/procflows/order_based.py
+     modified: geoips/plugins/yaml/workflows/geostationary_dmw/windbarbs_dmw_high.yaml
+     modified: geoips/plugins/yaml/workflows/read_test_interpolator_v1.yaml
+     modified: geoips/plugins/yaml/workflows/read_test_v1.yaml
+     modified: geoips/plugins/yaml/workflows/read_test_v1_coverage_checker.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/example_sub_workflow.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/example_workflow.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_datatree_conversions.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
+     modified: geoips/plugins/yaml/workflows/unit_tests/test_product_default.yaml
+     modified: geoips/plugins/yaml/workflows/visir/Infrared.yaml
+     modified: geoips/pydantic_models/v1/workflows.py
+     modified: geoips/utils/memusg/dataframe_utils.py
+     modified: geoips/utils/yaml_utils.py
+     modified: pyproject.toml
+     modified: tests/integration_tests/test_integration.py
+     modified: tests/integration_tests/test_obp_datatree.py
+     modified: tests/integration_tests/test_obp_family_conversions.py
      modified: tests/unit_tests/config/test_config.py
-     modified: tests/unit_tests/config/test_config_cli.py
-
-Fix workflowstepdefinitionmodel.name accepting none due to init=false
----------------------------------------------------------------------
-
-The name field on WorkflowStepDefinitionModel was marked init=False with a
-default of None, causing the value supplied in the YAML to be silently
-dropped during construction. Validators that read model.name therefore
-always saw None. Removed init=False and made the typing explicitly nullable.
-
-::
-
-     modified: geoips/pydantic_models/v1/workflows.py
-
-Allow arguments to be none on workflow-kind steps
--------------------------------------------------
-
-``WorkflowStepDefinitionModel.arguments`` was typed ``Dict[str, Any]`` but
-``_ensure_xor_name_spec`` sets it to ``None`` for ``kind: workflow`` steps
-(which carry an inline ``spec`` instead). Newer pydantic rejects ``None`` for
-a non-optional dict field, breaking sub-workflow (and now split) steps. The
-field is now ``Dict[str, Any] | None``.
-
-::
-
-     modified: geoips/pydantic_models/v1/workflows.py
-
-Logging files skipped by the class-based readers wrapper
---------------------------------------------------------
-
-The class-based readers wrapper used to skip bad files without saying
-anything, which made empty pipeline runs hard to debug. Each skipped file
-is now logged at INFO with its filename and error, and one WARNING gives
-the total number of files skipped. If every file gets skipped, the
-`NoValidFilesError` message now lists the reasons for the first five files.
-`HritError` now takes optional `start_datetime` and `end_datetime` arguments,
-so the wrapper reads the times directly instead of parsing them out of the
-error message. The old parsing crashed with an `IndexError` on most
-`HritError` messages.
-
-`#1343 <https://github.com/NRLMMD-GEOIPS/geoips>`_
-
-::
-
-     added: docs/source/releases/latest/1343-bugfix-class-based-readers-wrapper-skips-files.yaml
-     added: tests/unit_tests/interfaces/class_based/test_readers_skip_logging.py
-     modified: geoips/interfaces/class_based/readers.py
-     modified: geoips/plugins/classes/readers/seviri_hrit.py
-     modified: geoips/plugins/classes/readers/utils/hrit_reader.py
-
-Obp workflow implementation and validation improvements
--------------------------------------------------------
-
-Resolves OBP workflow step errors and ensures correct data flow between workflow steps.
-
-::
-
-     deleted: geoips/plugins/yaml/workflows/tests/abi_static_infrared_annotated_enhanced.yaml
-     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_imagery_annotated_enhanced.yaml
-     modified: geoips/interfaces/class_based/filename_formatters.py
-     modified: geoips/interfaces/class_based/output_formatters.py
-     modified: geoips/plugins/yaml/workflows/tests/abi_static_infrared_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/abi_static_infrared_netcdf_geoips.yaml
-     modified: geoips/plugins/yaml/workflows/tests/abi_static_nasa_dust_rgb_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/abi_static_test_visible_logarithmic_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/abi_static_visible_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/ami_static_infrared_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/ami_static_mst_absdiff_ir_bd_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/ami_static_visible_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/fci_static_visible_imagery_annotated.yaml
-     modified: geoips/plugins/yaml/workflows/tests/gfs_static_waveheight_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/gfs_static_windspeed_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/mimic_coarse_static_tpw_cimss_imagery_annotated.yaml
-     modified: geoips/plugins/yaml/workflows/tests/mwr_tb165_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/mwr_tb180_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/mwr_tb325_15_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/mwr_tb50_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/mwr_tb89_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_airmass_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_convective_storms_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_summer_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_winter_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_day_solar_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_dust_rgb_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_natural_color_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_night_microphys_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_volcanic_ash_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_no_self_register_unprojected_image.yaml
-     modified: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_unprojected_image.yaml
-     modified: geoips/plugins/yaml/workflows/tests/viirs_static_visible_imagery_clean.yaml
-     modified: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_imagery_annotated.yaml
-     modified: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_unprojected_image.yaml
-     modified: geoips/plugins/yaml/workflows/tests/viirsday_global_night_vis_ir_cogeotiff_rgba.yaml
-     modified: geoips/pydantic_models/v1/workflows.py
-
-Fix order-based procflow reader path (dict -> datatree)
--------------------------------------------------------
-
-Readers return the standard GeoIPS ``{key: xr.Dataset}`` dict, but this most
-common OBP path was broken in two ways that no test exercised. First,
-``BaseReaderPlugin._post_call`` used ``xr.*`` without importing xarray.
-Second, ``BaseClassPlugin._invoke`` early-returned when ``data is None`` (the
-reader case), so ``_post_call`` never ran and the ``dict -> DataTree`` merge
-was skipped, causing ``_attach_step_node`` to crash trying to wrap a raw dict.
-``_invoke`` now runs ``_post_call`` in the no-data branch, so reader output is
-merged into a ``DataTree`` end-to-end. A new integration test exercises the
-real dict-returning reader through the reader -> algorithm path.
-
-::
-
-     added: tests/integration_tests/test_obp_reader_path.py
-     modified: geoips/interfaces/class_based/readers.py
-     modified: geoips/interfaces/class_based_plugin.py
-
-Resolve expand steps python identifier processing
--------------------------------------------------
-
-Ensure expand_steps sanitizes step IDs derived from product names
-
-::
-
-     added: docs/source/releases/latest/1452-fix-expand-steps-python-idnetifer-processing.yaml
-     added: geoips/plugins/yaml/workflows/tests/sgli_static_ir_rgb_imagery_clean.yaml
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: tests/unit_tests/pydantic_models/v1/workflows/test_workflows.py
-
-Stop workflows model reading os.environ at import
--------------------------------------------------
-
-WorkflowPluginModel read GEOIPS_TESTDATA_DIR/GEOIPS_PACKAGES_DIR straight
-from os.environ at import time just for schema examples.
-This updates the workflow model to use geoips.config instead.
-
-::
-
-     added: docs/source/releases/latest/fix-workflows-env-at-import.yaml
-     modified: geoips/pydantic_models/v1/workflows.py
-
-Feature
-=======
-
-Order-based procflow: add filename formatter pydantic models
-------------------------------------------------------------
-
-Introduce Pydantic model defining and validating OBP-v1 FilenameFormatterArgumentsModel
-
-::
-
-     added: docs/source/releases/latest/1323-add-filename-formatter-pydantic-model.yaml
-     added: tests/unit_tests/pydantic_models/v1/filename_formatters/test_cases_bad.yaml
-     added: tests/unit_tests/pydantic_models/v1/filename_formatters/test_cases_good.yaml
-     added: tests/unit_tests/pydantic_models/v1/filename_formatters/test_cases_neutral.yaml
-     modified: docs/dev/order_based_procflow.rst
-     modified: geoips/plugins/modules/filename_formatters/geoips_netcdf_fname.py
-     modified: geoips/pydantic_models/v1/filename_formatters.py
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: tests/unit_tests/pydantic_models/v1/conftest.py
-     modified: tests/unit_tests/pydantic_models/v1/test_pydantic_models.py
-
-Implement split/join fan-out in the order-based procflow
---------------------------------------------------------
-
-``split`` and ``join`` step kinds are now executed rather than raising
-NotImplementedError. A ``split`` step carries an inline body sub-workflow
-(``spec``) plus branch config in ``arguments`` (an explicit ``scopes`` list,
-or ``over: sector_list``); the body runs once per branch, nested under
-``/<split_id>/<scope>``. A ``join`` step re-collects the branches under a
-single node and records ``joined_scopes``. The ``scope`` field is re-enabled
-(no longer rejected at validation) as the branch label, and the schema accepts
-a ``split`` step's inline ``spec`` + branch ``arguments``. Seeded
-sub-workflows now correctly pass their pre-loaded input to a first
-(``depends_on: []``) step.
-
-::
-
-     added: tests/integration_tests/test_obp_split_join.py
-     modified: geoips/interfaces/class_based/workflow.py
-     modified: geoips/pydantic_models/v1/workflows.py
+     modified: tests/unit_tests/config/test_yaml_loader.py
      modified: tests/unit_tests/interfaces/class_based/test_workflow.py
      modified: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
-
-Order-based procflow: add output formatters
--------------------------------------------
-
-Introduce Pydantic model defining and validating OBP-v1 OutputFormatterArgumentsModel
-
-::
-
-     added: docs/source/releases/latest/1279-OBP-add-output-formatters.yaml
-     added: tests/unit_tests/pydantic_models/v1/output_formatters/test_cases_bad.yaml
-     added: tests/unit_tests/pydantic_models/v1/output_formatters/test_cases_good.yaml
-     added: tests/unit_tests/pydantic_models/v1/output_formatters/test_cases_neutral.yaml
-     modified: docs/dev/order_based_procflow.rst
-     modified: geoips/pydantic_models/v1/output_formatters.py
-     modified: tests/unit_tests/pydantic_models/v1/conftest.py
-     modified: tests/unit_tests/pydantic_models/v1/test_pydantic_models.py
-     modified: geoips/plugins/yaml/workflows/read_test_v1.yaml
-
-Add colormapper pydantic model
-------------------------------
-
-Introduce Pydantic model defining and validating OBP-v1 ColormapperArgumentsModel
-
-::
-
-     added: docs/source/releases/latest/1336-add-colomapper-pydantic-model.yaml
-     added: tests/unit_tests/pydantic_models/v1/colormappers/test_cases_bad.yaml
-     added: tests/unit_tests/pydantic_models/v1/colormappers/test_cases_good.yaml
-     added: tests/unit_tests/pydantic_models/v1/colormappers/test_cases_neutral.yaml
-     modified: docs/dev/order_based_procflow.rst
-     modified: geoips/pydantic_models/v1/colormappers.py
-     modified: tests/unit_tests/pydantic_models/v1/conftest.py
-     modified: tests/unit_tests/pydantic_models/v1/test_pydantic_models.py
-
-Static multi-sector processing (sbp) via split over sector_list
----------------------------------------------------------------
-
-The order-based procflow can now produce output for multiple static sectors
-in a single run. A ``split`` step with ``over: sector_list`` resolves each
-static sector in ``globals.sector_list`` to an ``AreaDefinition`` (making the
-previously dead ``Workflow._resolve_area_defs`` live) and runs its inline body
-sub-workflow once per sector. Each branch's ``AreaDefinition`` is seeded into
-the branch input so the body's steps receive it as ``area_def`` through the
-standard conduit mechanism. Dynamic sectors remain out of scope.
-
-::
-
-     added: tests/integration_tests/test_obp_sectoring.py
-     modified: geoips/interfaces/class_based/workflow.py
-
-Allow plugin packages to register configuration options
--------------------------------------------------------
-
-External GeoIPS plugin packages can now register their own configuration
-settings via the new ``geoips.config_plugins`` entry-point group. Each
-package exposes a ``geoips.config.ConfigPlugin`` wrapping a pydantic
-settings model.
-
-Plugin settings participate in the standard layered precedence
-(defaults > .geoips.yaml under ``geoips.plugins.<pkg>`` > auto-generated
-``GEOIPS_PLUGIN_<PKG>_<FIELD>`` environment variables), are accessed via
-``config.plugins.<pkg>``, and are included by ``geoips config create``
-(with per-plugin header and per-field default comments under ``--all``).
-``geoips config validate`` validates plugin sections and warns on unknown
-settings. Discovery and per-plugin validation are lazy so a misconfigured
-plugin cannot break importing ``geoips.config``.
-
-::
-
-     added: docs/source/releases/latest/add-plugin-config-registration.yaml
-     added: geoips/config/plugins.py
-     added: tests/unit_tests/config/test_plugins.py
-     added: tests/unit_tests/config/test_config_cli.py
-     modified: geoips/config/__init__.py
-     modified: geoips/config/config.py
-     modified: geoips/errors.py
-     modified: geoips/commandline/geoips_config.py
-     modified: tests/unit_tests/config/test_env_map_sync.py
-     modified: docs/source/concepts/configuration/index.rst
-
-Add yaml-based configuration system that replaces base_paths.py
----------------------------------------------------------------
-
-Introduces a new ``geoips.config`` module with a layered YAML-based
-configuration system with pydantic-validated settings. Configuration is
-resolved with priority: environment variables > project-level .geoips.yaml
-> code defaults.
-
-The new system replaces the imperative ``PATHS`` dictionary in
-``geoips/filenames/base_paths.py``, which is now a shim
-with deprecation warnings. All existing imports and dict-style access
-continue to work unchanged.
-
-::
-
-     added: docs/source/releases/latest/add-layered-yaml-config-system.yaml
-     added: geoips/config/__init__.py
-     added: geoips/config/config.py
-     added: geoips/config/schema.py
-     added: geoips/config/yaml_loader.py
-     added: tests/unit_tests/config/__init__.py
-     added: tests/unit_tests/config/test_config.py
-     added: tests/unit_tests/config/test_schema.py
-     added: tests/unit_tests/config/test_yaml_loader.py
-     added: tests/unit_tests/config/test_env_map_sync.py
-     modified: geoips/filenames/base_paths.py
-     modified: docs/source/concepts/configuration/index.rst
-
-Add plugin_proivded as an additional default value in obp pydantic models
--------------------------------------------------------------------------
-
-'This PR introduces a new default value called PLUGIN_PROVIDED that would help us to
-sanitize the workflow: drop the fields/arguments with the value = "PLUGIN_PROVIDED".
-This will make these fields omitted letting the call signature fill in the required
-default value.'
-
-Note-1: This is a breaking change.
-
-Note-2: If we do not specify the default value as "PLUGIN_PROVIDED" and set it to
-`None`, Pydantic-Python behavior will not allow the plugin-defined defaults to
-actually take effect.
-
-::
-
-     added: tests/unit_tests/plugins/modules/procflows/conftest.py
-     added: tests/unit_tests/plugins/modules/procflows/test_obp_utils.py
-     added: geoips/docs/source/releases/latest/update-dev-staging.yaml
-     added: geoips/plugins/modules/procflows/obp_utils.py
-     added: geoips/constants.py
-     modified: geoips/plugins/modules/procflows/order_based.py
-
-Introduce order-based procflow workflows
-----------------------------------------
-
-NO DESCRIPTION
-
-::
-
-     deleted: geoips/plugins/yaml/workflows/unit_tests/abi-static-infrared-imagery-annotated-enhanced.yaml
-     added: docs/source/releases/latest/1452-fix-expand-steps-python-idnetifer-processing.yaml
-     added: docs/source/releases/latest/1455-introduce-order-based-procflow-workflows.yaml
-     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_annotated_enhanced.yaml
-     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/abi_static_infrared_netcdf_geoips.yaml
-     added: geoips/plugins/yaml/workflows/tests/abi_static_nasa_dust_rgb_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/abi_static_test_visible_logarithmic_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/abi_static_visible_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/ami_static_infrared_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/ami_static_mst_absdiff_ir_bd_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/ami_static_visible_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/ewsg_static_infrared_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/fci_static_visible_imagery_annotated.yaml
-     added: geoips/plugins/yaml/workflows/tests/gfs_static_waveheight_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/gfs_static_windspeed_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/mimic_coarse_static_tpw_cimss_imagery_annotated.yaml
-     added: geoips/plugins/yaml/workflows/tests/mwr_tb165_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/mwr_tb180_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/mwr_tb325_15_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/mwr_tb50_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/mwr_tb89_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_airmass_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_convective_storms_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_summer_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_day_microphys_winter_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_day_solar_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_natural_color_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_night_microphys_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_volcanic_ash_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_no_self_register_unprojected_image.yaml
-     added: geoips/plugins/yaml/workflows/tests/seviri_wv_upper_unprojected_image.yaml
-     added: geoips/plugins/yaml/workflows/tests/sgli_static_ir_rgb_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/smap_awips_netcdf.yaml
-     added: geoips/plugins/yaml/workflows/tests/smap_unsectored_text_winds.yaml
-     added: geoips/plugins/yaml/workflows/tests/viirs_static_visible_imagery_clean.yaml
-     added: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_imagery_annotated.yaml
-     added: geoips/plugins/yaml/workflows/tests/viirsclearnight_night_vis_ir_geoips1_unprojected_image.yaml
-     added: geoips/plugins/yaml/workflows/tests/viirsday_global_night_vis_ir_cogeotiff_rgba.yaml
-     modified: docs/dev/order_based_procflow.rst
-     modified: geoips/plugins/yaml/products/ami.yaml
-     modified: geoips/plugins/yaml/products/seviri.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: tests/unit_tests/pydantic_models/v1/workflows/test_workflows.py
+     modified: tests/unit_tests/pydantic_models/v1/workflows/test_workflow_step_definition_model.py
 
 Documentation
 =============
 
-Update datatree spec implementation status and procflow interface docstring
----------------------------------------------------------------------------
+Add release note for version 2.0.0a
+-----------------------------------
 
-Update the Implementation Status block in ``docs/dev/datatree-spec.md`` to
-reflect that split/join execution and static multi-sector (SBP) processing
-are now implemented (with dynamic sectors and ``when:`` still deferred), and
-that DataTree converter dispatch uses a single shared registry. The
-``ProcflowsInterface`` docstring is corrected to describe the class-based
-``order_based`` procflow and to drop the reference to a non-existent
-``overlay`` procflow.
+Release note on release branch to force tag/release, package/publish,
+and deploy docs.
+
+geoips - v2.0.0a updates
 
 ::
 
-     modified: docs/dev/datatree-spec.md
-     modified: geoips/interfaces/class_based/procflows.py
+     added: docs/source/releases/2.0.0a/2.0.0a-release-note.yaml
+
+Update tagged versions
+----------------------
+
+* Tagged version: 2.0.0a
+
+geoips - v2.0.0a updates
+
+::
+
+     modified: .github/versions/tagged_version
 
 Add spec for obp datatrees
 --------------------------
@@ -987,6 +1170,28 @@ This adds a specification for the DataTree backbone for the OBP with an eye towa
 ::
 
      added: docs/dev/datatree-spec.md
+
+Add basic linting information
+-----------------------------
+
+Added documentation for linters to help contributors follow coding standards.
+
+::
+
+     added: docs/source/contribute/linters.rst
+     modified: docs/source/contribute/index.rst
+
+Update ci infrastructure documentation
+--------------------------------------
+
+Clarify that ansible playbooks manage software, plugins, and test datasets
+for CI purposes.  Document that ansible-core is pre-installed on CI runners.
+Add early cross-reference to Makefile convenience targets.  Document
+editable_pip_install=true behavior in dev Docker targets.
+
+::
+
+     modified: docs/source/concepts/architecture/ci-infrastructure.rst
 
 Update sphinx configuration and add support file creation utils for versioned docs
 ----------------------------------------------------------------------------------
@@ -1012,76 +1217,222 @@ modifications to the CI to build and deploy multiple versions of the docs at onc
      modified: .github/workflows/deploy-docs.yaml
      modified: docs/source/_templates/sphinx_conf.template.py
 
-Add basic linting information
------------------------------
+Update datatree spec implementation status and procflow interface docstring
+---------------------------------------------------------------------------
 
-Added documentation for linters to help contributors follow coding standards.
-
-::
-
-     added: docs/source/contribute/linters.rst
-     modified: docs/source/contribute/index.rst
-
-Add release note for version 2.0.0a
------------------------------------
-
-Release note on release branch to force tag/release, package/publish,
-and deploy docs.
-
-geoips - v2.0.0a updates
+Update the Implementation Status block in ``docs/dev/datatree-spec.md`` to
+reflect that split/join execution and static multi-sector (SBP) processing
+are now implemented (with dynamic sectors and ``when:`` still deferred), and
+that DataTree converter dispatch uses a single shared registry. The
+``ProcflowsInterface`` docstring is corrected to describe the class-based
+``order_based`` procflow and to drop the reference to a non-existent
+``overlay`` procflow.
 
 ::
 
-     added: docs/source/releases/2.0.0a/2.0.0a-release-note.yaml
+     modified: docs/dev/datatree-spec.md
+     modified: geoips/interfaces/class_based/procflows.py
 
-Update tagged versions
-----------------------
+Continuous integration
+======================
 
-* Tagged version: 2.0.0a
+Ci image, test data and parallel test fixes
+-------------------------------------------
 
-geoips - v2.0.0a updates
+* ``apt-get update`` runs with ``--error-on=any``, so a repository that cannot
+  be reached (e.g. a DNS failure) fails the build instead of installing stale
+  or missing packages. The unstable GDAL packages are pinned per package
+  (``gdal-bin/unstable libgdal-dev/unstable``) rather than with ``-t unstable``.
+* ``PIP_ROOT_USER_ACTION=ignore`` silences pip's warning about running as root
+  in the image build stages.
+* ``GEOIPS_ANCILDAT`` is set to ``/geoips_testdata``, where ``geoips config
+  install`` puts the ancillary datasets the fortran plugins read (``lw_mask``,
+  ``rayleigh``, ...).
+* The ``site`` test datasets now include those ancillary datasets
+  (``city_lights``, ``elevation``, ``emiss``, ``lunarref``, ``lw_mask``,
+  ``merra``, ``rayleigh``, ``synth_green``; geoips_debra reads ``emiss`` and
+  ``merra``). The inventory and the ``test_data`` role defaults list the same
+  datasets again.
+* The ``test_data`` role downloads the archives to
+  ``$GEOIPS_TESTDATA_DIR/.download-tmp`` instead of the system ``/tmp``, so
+  they use the disk of the test data (emiss.tgz is 7.7 GB). In CI, ``/tmp`` is
+  in the container, on the disk of the Docker data.
+* Under pytest-xdist, each worker writes its outputs to its own
+  ``GEOIPS_OUTDIRS`` (``<GEOIPS_OUTDIRS>/xdist/<worker>``), since several
+  tests write the same output files. The install check lock stays shared by
+  all workers.
 
 ::
 
-     modified: .github/versions/tagged_version
+     added: docs/source/releases/latest/ci-image-and-parallel-test-fixes.yaml
+     modified: Dockerfile
+     modified: docs/source/architecture/ci-infrastructure.rst
+     modified: tests/ansible/inventory/local.yml
+     modified: tests/ansible/roles/test_data/defaults/main.yml
+     modified: tests/ansible/roles/test_data/tasks/install_datasets.yml
+     modified: tests/ansible/roles/test_data/tasks/main.yml
+     modified: tests/integration_tests/test_integration.py
 
-Update ci infrastructure documentation
---------------------------------------
+Disable plugin repos in ci with .github/ci-disabled-repos.yaml
+--------------------------------------------------------------
 
-Clarify that ansible playbooks manage software, plugins, and test datasets
-for CI purposes.  Document that ansible-core is pre-installed on CI runners.
-Add early cross-reference to Makefile convenience targets.  Document
-editable_pip_install=true behavior in dev Docker targets.
+Plugin repos can be left out of the CI image without editing the inventory,
+for example while their install is broken.
+
+* ``.github/ci-disabled-repos.yaml`` maps the repos to disable to the reason.
+  It applies to every branch, and disables no repos for now.
+* The ansible playbook takes ``disabled_repos`` (``"repo repo ..."``, env
+  ``DISABLED_REPOS``, Docker build argument ``DISABLED_REPOS`` of the
+  ``geoips-full`` and ``geoips-site`` stages) and removes those repos from the
+  plugin repo lists, keeping their order. A name that is not in the lists, or
+  that is also in ``repo_branches``, fails the run.
+* geoips_ci reads the file, passes the build argument and lists the disabled
+  repos in the job summary.
 
 ::
 
-     modified: docs/source/concepts/architecture/ci-infrastructure.rst
+     added: .github/ci-disabled-repos.yaml
+     added: docs/source/releases/latest/ci-disabled-repos.yaml
+     modified: Dockerfile
+     modified: tests/ansible/inventory/local.yml
+     modified: tests/ansible/playbooks/install.yml
+     modified: tests/ansible/README.md
+     modified: docs/source/architecture/ci-infrastructure.rst
+     modified: docs/source/getting-started/installing/docker.rst
+
+Add unit and integration tests for the datatree runtime
+-------------------------------------------------------
+
+New unit tests cover pydantic schema validation (WorkflowStepDefinitionModel,
+WorkflowSpecModel), _invoke() DataTree wrapping, Workflow topological sort
+and retention policies, DataTreeDitto converters, and dask tokenization.
+A new integration test suite exercises synthetic-reader workflows end-to-end
+with DataTree shape assertions and output_token stability checks across
+repeated runs.
+
+::
+
+     added: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
+     added: tests/unit_tests/utils/types/test_datatree_converters.py
+     added: tests/unit_tests/utils/types/test_tokenization.py
+     added: tests/unit_tests/interfaces/test_class_based_plugin_invoke.py
+     added: tests/unit_tests/interfaces/class_based/test_workflow.py
+     added: tests/unit_tests/plugins/modules/procflows/test_order_based.py
+     added: tests/integration_tests/test_obp_datatree.py
+     added: tests/integration_tests/conftest.py
+
+Add self-hosted runner integration test workflow
+------------------------------------------------
+
+Add integ_test.yaml CI workflow on self-hosted runners that builds a Docker
+image, downloads test datasets via ansible, and runs base and full integration
+tests.  Test data is mounted as a runtime volume (never baked into images).
+
+Rename ci.yml to integ_test.yaml to reflect its integration-test focus.
+
+::
+
+     added: .github/workflows/integ_test.yaml
+     modified: .github/workflows/ci.yml
+
+Replace same-name branch checkouts with explicit dependency overrides
+---------------------------------------------------------------------
+
+``GEOIPS_MODIFIED_BRANCH`` / ``geoips_modified_branch`` are removed: installs
+no longer check out a branch of the same name in every repo that has one,
+falling back to the default branch.
+
+* The ansible playbook takes ``repo_branches`` (``"repo=ref ..."``, env
+  ``REPO_BRANCHES``, Docker build argument ``REPO_BRANCHES``): the branch, tag
+  or commit to clone each listed repo at. It checks the list first (unknown
+  repos fail, and so do private repos when the ``site`` tasks run without
+  ``geoips_use_private_plugins``; other tiers, such as the ``geoips-full``
+  image stage, ignore private repos in the list), a ref
+  that does not exist fails the install, and so does any other clone error,
+  which was ignored before. The refs and commits are written to
+  ``$GEOIPS_PACKAGES_DIR/.ci_repo_branches``. ``repo=owner:ref`` clones the
+  ref from ``owner``'s fork of the repo (next to ``geoips_repo_url``), for
+  branches that only exist in a fork. A repo at a requested ref that a later
+  install replaced (a plugin that depends on it by git URL, as geoips_nucaps
+  does on pyrocb) is reinstalled from its clone, without dependencies.
+* The ``geoips-site`` target takes ``PIP_OVERRIDES``: pip requirements
+  installed last, so they replace the pinned versions, recorded in
+  ``$GEOIPS_PACKAGES_DIR/.ci_pip_overrides``. The ``python_env`` install
+  tasks leave those packages out of ``requirements.txt``, so the install
+  checks of the integration tests no longer put the pinned versions back.
+* geoips_ci sets both from the entry for the branch under test in
+  ``.github/ci-dependencies.yaml`` (keyed by branch name, so it does not affect
+  ``main`` once merged), or from the new ``dependency_overrides`` input of
+  ``integ_test.yaml``.
+* ``check_system_requirements.sh`` no longer switches branches after cloning.
+  This is a breaking change for installs outside Docker that set
+  ``GEOIPS_MODIFIED_BRANCH``: check out the branches you need yourself.
+* The ``dev`` image stage re-runs the ``site`` install, so it also takes
+  ``REPO_BRANCHES``, ``DISABLED_REPOS`` and ``PIP_OVERRIDES``.
+
+::
+
+     added: docs/source/releases/latest/ci-dependency-overrides.yaml
+     modified: .github/workflows/integ_test.yaml
+     modified: Dockerfile
+     modified: docs/source/architecture/ci-infrastructure.rst
+     modified: docs/source/getting-started/installing/docker.rst
+     modified: setup/check_system_requirements.sh
+     modified: tests/ansible/README.md
+     modified: tests/ansible/inventory/local.yml
+     modified: tests/ansible/playbooks/install.yml
+     modified: tests/ansible/roles/python_env/tasks/main.yml
+     modified: tests/ansible/roles/settings_repos/tasks/main.yml
+     modified: tests/ansible/roles/source_repos/tasks/main.yml
+     modified: tests/integration_tests/full_install.sh
+     modified: tests/integration_tests/site_install.sh
+
+Build the ci image with private plugins using a github token build secret
+-------------------------------------------------------------------------
+
+Private plugin repositories (``private_plugin_repos`` and
+``private_fortran_repos`` in ``tests/ansible/inventory/local.yml``) can now be
+cloned while building the Docker image, using a GitHub token that can read
+them.
+
+* The token is passed as the BuildKit secret ``geoips_private_token``. The new
+  ``tests/ansible/scripts/github-token-env.sh`` gives it to git through
+  ``GIT_CONFIG_*`` environment variables in the ``geoips-site`` and ``dev``
+  install steps only, so it is never stored in an image layer, the image
+  history or a cloned repository's ``.git/config``.
+* The install now writes ``/packages/.private_plugins`` listing the private
+  plugins, so CI can keep their test output out of public logs.
+* ``lunarref`` and ``true_color`` are public, so they moved from
+  ``private_fortran_repos`` to the end of ``fortran_repos_ordered``: they are
+  now installed without the token and their test output is shown in CI logs.
+* The private plugin lists now hold every private plugin repository:
+  ``pyrocb`` (``geoips_nucaps`` depends on it, so it is installed first),
+  ``geoips_nucaps``, ``geoips_proxyvis``, ``geoips_tomorrowio``, ``geoips_wsfm``
+  and ``ryglickicane``, and in ``private_fortran_repos`` ``geoips_debra``.
+  ``geoips_xesmf`` is commented out for now: xesmf needs the ESMF library,
+  which the image does not have. ``tc_mint`` is removed: there is no
+  ``NRLMMD-GEOIPS/tc_mint`` repository, so cloning it failed the
+  ``geoips-site`` build.
+* ``private_test_datasets`` now holds ``test_data_ngfs``, ``test_data_nucaps``
+  and ``test_data_pyrocb``, which the private plugins' tests need, instead of
+  ``test_data_mint``, which ``geoips config install`` does not know.
+* ``integ_test.yaml`` passes the ``GEOIPS_PRIVATE_REPOS_TOKEN`` secret to the
+  reusable CI as ``private_repos_token``. Without that secret the image has
+  the public plugins only.
+
+::
+
+     modified: Dockerfile
+     modified: tests/ansible/README.md
+     modified: tests/ansible/inventory/local.yml
+     modified: tests/ansible/roles/source_repos/tasks/main.yml
+     modified: .github/workflows/integ_test.yaml
+     modified: docs/source/architecture/ci-infrastructure.rst
+     modified: tests/ansible/roles/test_data/defaults/main.yml
+     added: tests/ansible/scripts/github-token-env.sh
 
 Refactor
 ========
-
-Consolidate obp conduit registry and use lexeme for kind/interface names
-------------------------------------------------------------------------
-
-The OBP "conduit" binding registry (upstream plugin kind -> downstream kwarg
-name + extractor) previously lived inside ``class_based_plugin`` as
-``_OBP_CONDUITS`` and was reached back into by ``YamlPluginCallable``. It now
-has a single home in ``geoips/utils/types/obp_conduits.py`` (alongside the
-other adaptation/conversion types), exported as ``OBP_CONDUITS`` +
-``kwarg_name_for_kind``, so a new plugin kind is wired in one place. Plugin
-kind <-> interface-name conversion is done with ``Lexeme(...).plural`` /
-``Lexeme(...).singular`` directly at the call sites; the previous, subtly
-wrong ``interface.rstrip("s")`` in ``YamlPluginCallable`` is replaced with
-``Lexeme``.
-
-::
-
-     added: geoips/utils/types/obp_conduits.py
-     modified: geoips/interfaces/class_based_plugin.py
-     modified: geoips/utils/types/yaml_plugin_callable.py
-     modified: geoips/interfaces/class_based/workflow.py
-     modified: geoips/pydantic_models/v1/workflows.py
-     modified: geoips/plugins/modules/procflows/obp_utils.py
 
 Route datatreeditto reverse conversion through the shared converter_registry
 ----------------------------------------------------------------------------
@@ -1437,323 +1788,28 @@ support this new functionality.
      modified: geoips/interfaces/class_based/sector_metadata_generators.py
      modified: pyproject.toml
 
-Continuous integration
-======================
+Consolidate obp conduit registry and use lexeme for kind/interface names
+------------------------------------------------------------------------
 
-Ci image, test data and parallel test fixes
--------------------------------------------
-
-* ``apt-get update`` runs with ``--error-on=any``, so a repository that cannot
-  be reached (e.g. a DNS failure) fails the build instead of installing stale
-  or missing packages. The unstable GDAL packages are pinned per package
-  (``gdal-bin/unstable libgdal-dev/unstable``) rather than with ``-t unstable``.
-* ``PIP_ROOT_USER_ACTION=ignore`` silences pip's warning about running as root
-  in the image build stages.
-* ``GEOIPS_ANCILDAT`` is set to ``/geoips_testdata``, where ``geoips config
-  install`` puts the ancillary datasets the fortran plugins read (``lw_mask``,
-  ``rayleigh``, ...).
-* The ``site`` test datasets now include those ancillary datasets
-  (``city_lights``, ``elevation``, ``emiss``, ``lunarref``, ``lw_mask``,
-  ``merra``, ``rayleigh``, ``synth_green``; geoips_debra reads ``emiss`` and
-  ``merra``). The inventory and the ``test_data`` role defaults list the same
-  datasets again.
-* The ``test_data`` role downloads the archives to
-  ``$GEOIPS_TESTDATA_DIR/.download-tmp`` instead of the system ``/tmp``, so
-  they use the disk of the test data (emiss.tgz is 7.7 GB). In CI, ``/tmp`` is
-  in the container, on the disk of the Docker data.
-* Under pytest-xdist, each worker writes its outputs to its own
-  ``GEOIPS_OUTDIRS`` (``<GEOIPS_OUTDIRS>/xdist/<worker>``), since several
-  tests write the same output files. The install check lock stays shared by
-  all workers.
+The OBP "conduit" binding registry (upstream plugin kind -> downstream kwarg
+name + extractor) previously lived inside ``class_based_plugin`` as
+``_OBP_CONDUITS`` and was reached back into by ``YamlPluginCallable``. It now
+has a single home in ``geoips/utils/types/obp_conduits.py`` (alongside the
+other adaptation/conversion types), exported as ``OBP_CONDUITS`` +
+``kwarg_name_for_kind``, so a new plugin kind is wired in one place. Plugin
+kind <-> interface-name conversion is done with ``Lexeme(...).plural`` /
+``Lexeme(...).singular`` directly at the call sites; the previous, subtly
+wrong ``interface.rstrip("s")`` in ``YamlPluginCallable`` is replaced with
+``Lexeme``.
 
 ::
 
-     added: docs/source/releases/latest/ci-image-and-parallel-test-fixes.yaml
-     modified: Dockerfile
-     modified: docs/source/architecture/ci-infrastructure.rst
-     modified: tests/ansible/inventory/local.yml
-     modified: tests/ansible/roles/test_data/defaults/main.yml
-     modified: tests/ansible/roles/test_data/tasks/install_datasets.yml
-     modified: tests/ansible/roles/test_data/tasks/main.yml
-     modified: tests/integration_tests/test_integration.py
-
-Build the ci image with private plugins using a github token build secret
--------------------------------------------------------------------------
-
-Private plugin repositories (``private_plugin_repos`` and
-``private_fortran_repos`` in ``tests/ansible/inventory/local.yml``) can now be
-cloned while building the Docker image, using a GitHub token that can read
-them.
-
-* The token is passed as the BuildKit secret ``geoips_private_token``. The new
-  ``tests/ansible/scripts/github-token-env.sh`` gives it to git through
-  ``GIT_CONFIG_*`` environment variables in the ``geoips-site`` and ``dev``
-  install steps only, so it is never stored in an image layer, the image
-  history or a cloned repository's ``.git/config``.
-* The install now writes ``/packages/.private_plugins`` listing the private
-  plugins, so CI can keep their test output out of public logs.
-* ``lunarref`` and ``true_color`` are public, so they moved from
-  ``private_fortran_repos`` to the end of ``fortran_repos_ordered``: they are
-  now installed without the token and their test output is shown in CI logs.
-* The private plugin lists now hold every private plugin repository:
-  ``pyrocb`` (``geoips_nucaps`` depends on it, so it is installed first),
-  ``geoips_nucaps``, ``geoips_proxyvis``, ``geoips_tomorrowio``, ``geoips_wsfm``
-  and ``ryglickicane``, and in ``private_fortran_repos`` ``geoips_debra``.
-  ``geoips_xesmf`` is commented out for now: xesmf needs the ESMF library,
-  which the image does not have. ``tc_mint`` is removed: there is no
-  ``NRLMMD-GEOIPS/tc_mint`` repository, so cloning it failed the
-  ``geoips-site`` build.
-* ``private_test_datasets`` now holds ``test_data_ngfs``, ``test_data_nucaps``
-  and ``test_data_pyrocb``, which the private plugins' tests need, instead of
-  ``test_data_mint``, which ``geoips config install`` does not know.
-* ``integ_test.yaml`` passes the ``GEOIPS_PRIVATE_REPOS_TOKEN`` secret to the
-  reusable CI as ``private_repos_token``. Without that secret the image has
-  the public plugins only.
-
-::
-
-     modified: Dockerfile
-     modified: tests/ansible/README.md
-     modified: tests/ansible/inventory/local.yml
-     modified: tests/ansible/roles/source_repos/tasks/main.yml
-     modified: .github/workflows/integ_test.yaml
-     modified: docs/source/architecture/ci-infrastructure.rst
-     modified: tests/ansible/roles/test_data/defaults/main.yml
-     added: tests/ansible/scripts/github-token-env.sh
-
-Add self-hosted runner integration test workflow
-------------------------------------------------
-
-Add integ_test.yaml CI workflow on self-hosted runners that builds a Docker
-image, downloads test datasets via ansible, and runs base and full integration
-tests.  Test data is mounted as a runtime volume (never baked into images).
-
-Rename ci.yml to integ_test.yaml to reflect its integration-test focus.
-
-::
-
-     added: .github/workflows/integ_test.yaml
-     modified: .github/workflows/ci.yml
-
-Disable plugin repos in ci with .github/ci-disabled-repos.yaml
---------------------------------------------------------------
-
-Plugin repos can be left out of the CI image without editing the inventory,
-for example while their install is broken.
-
-* ``.github/ci-disabled-repos.yaml`` maps the repos to disable to the reason.
-  It applies to every branch, and disables no repos for now.
-* The ansible playbook takes ``disabled_repos`` (``"repo repo ..."``, env
-  ``DISABLED_REPOS``, Docker build argument ``DISABLED_REPOS`` of the
-  ``geoips-full`` and ``geoips-site`` stages) and removes those repos from the
-  plugin repo lists, keeping their order. A name that is not in the lists, or
-  that is also in ``repo_branches``, fails the run.
-* geoips_ci reads the file, passes the build argument and lists the disabled
-  repos in the job summary.
-
-::
-
-     added: .github/ci-disabled-repos.yaml
-     added: docs/source/releases/latest/ci-disabled-repos.yaml
-     modified: Dockerfile
-     modified: tests/ansible/inventory/local.yml
-     modified: tests/ansible/playbooks/install.yml
-     modified: tests/ansible/README.md
-     modified: docs/source/architecture/ci-infrastructure.rst
-     modified: docs/source/getting-started/installing/docker.rst
-
-Add unit and integration tests for the datatree runtime
--------------------------------------------------------
-
-New unit tests cover pydantic schema validation (WorkflowStepDefinitionModel,
-WorkflowSpecModel), _invoke() DataTree wrapping, Workflow topological sort
-and retention policies, DataTreeDitto converters, and dask tokenization.
-A new integration test suite exercises synthetic-reader workflows end-to-end
-with DataTree shape assertions and output_token stability checks across
-repeated runs.
-
-::
-
-     added: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
-     added: tests/unit_tests/utils/types/test_datatree_converters.py
-     added: tests/unit_tests/utils/types/test_tokenization.py
-     added: tests/unit_tests/interfaces/test_class_based_plugin_invoke.py
-     added: tests/unit_tests/interfaces/class_based/test_workflow.py
-     added: tests/unit_tests/plugins/modules/procflows/test_order_based.py
-     added: tests/integration_tests/test_obp_datatree.py
-     added: tests/integration_tests/conftest.py
-
-Replace same-name branch checkouts with explicit dependency overrides
----------------------------------------------------------------------
-
-``GEOIPS_MODIFIED_BRANCH`` / ``geoips_modified_branch`` are removed: installs
-no longer check out a branch of the same name in every repo that has one,
-falling back to the default branch.
-
-* The ansible playbook takes ``repo_branches`` (``"repo=ref ..."``, env
-  ``REPO_BRANCHES``, Docker build argument ``REPO_BRANCHES``): the branch, tag
-  or commit to clone each listed repo at. It checks the list first (unknown
-  repos fail, and so do private repos when the ``site`` tasks run without
-  ``geoips_use_private_plugins``; other tiers, such as the ``geoips-full``
-  image stage, ignore private repos in the list), a ref
-  that does not exist fails the install, and so does any other clone error,
-  which was ignored before. The refs and commits are written to
-  ``$GEOIPS_PACKAGES_DIR/.ci_repo_branches``. ``repo=owner:ref`` clones the
-  ref from ``owner``'s fork of the repo (next to ``geoips_repo_url``), for
-  branches that only exist in a fork. A repo at a requested ref that a later
-  install replaced (a plugin that depends on it by git URL, as geoips_nucaps
-  does on pyrocb) is reinstalled from its clone, without dependencies.
-* The ``geoips-site`` target takes ``PIP_OVERRIDES``: pip requirements
-  installed last, so they replace the pinned versions, recorded in
-  ``$GEOIPS_PACKAGES_DIR/.ci_pip_overrides``. The ``python_env`` install
-  tasks leave those packages out of ``requirements.txt``, so the install
-  checks of the integration tests no longer put the pinned versions back.
-* geoips_ci sets both from the entry for the branch under test in
-  ``.github/ci-dependencies.yaml`` (keyed by branch name, so it does not affect
-  ``main`` once merged), or from the new ``dependency_overrides`` input of
-  ``integ_test.yaml``.
-* ``check_system_requirements.sh`` no longer switches branches after cloning.
-  This is a breaking change for installs outside Docker that set
-  ``GEOIPS_MODIFIED_BRANCH``: check out the branches you need yourself.
-* The ``dev`` image stage re-runs the ``site`` install, so it also takes
-  ``REPO_BRANCHES``, ``DISABLED_REPOS`` and ``PIP_OVERRIDES``.
-
-::
-
-     added: docs/source/releases/latest/ci-dependency-overrides.yaml
-     modified: .github/workflows/integ_test.yaml
-     modified: Dockerfile
-     modified: docs/source/architecture/ci-infrastructure.rst
-     modified: docs/source/getting-started/installing/docker.rst
-     modified: setup/check_system_requirements.sh
-     modified: tests/ansible/README.md
-     modified: tests/ansible/inventory/local.yml
-     modified: tests/ansible/playbooks/install.yml
-     modified: tests/ansible/roles/python_env/tasks/main.yml
-     modified: tests/ansible/roles/settings_repos/tasks/main.yml
-     modified: tests/ansible/roles/source_repos/tasks/main.yml
-     modified: tests/integration_tests/full_install.sh
-     modified: tests/integration_tests/site_install.sh
-
-Removal
-=======
-
-Adding geoips_yaml_utils
-------------------------
-
-This PR adds the dependency package geoips_yaml_utils, which is a wrapper
-around PyYAML and a replacement for pyaml-env. This also means that
-geoips.utils.yaml_utils and the related test package in tests/unit_tests/
-needs to be removed as the logic was migrated to geoips_yaml_utils and is
-no longer needed here.
-
-`#1382 <https://github.com/NRLMMD-GEOIPS/geoips>`_
-
-::
-
-     deleted: geoips/utils/yaml_utils.py
-     deleted: tests/unit_tests/utils/test_yaml_utils.py
-     added: docs/source/releases/latest/1382-import-geoips_yaml_utils.yaml
-     modified: pyproject.toml
-     modified: geoips/commandline/cmd_instructions.py
-     modified: geoips/commandline/geoips_command.py
-     modified: geoips/commandline/geoips_describe.py
-     modified: geoips/commandline/geoips_run.py
-     modified: geoips/commandline/geoips_validate.py
-     modified: geoips/interfaces/base.py
-     modified: geoips/plugins/modules/procflows/config_based.py
-     modified: geoips/pydantic_models/v1/products.py
-     modified: geoips/sector_utils/yaml_utils.py
-     modified: geoips/utils/memusg/dataframe_utils.py
-     modified: geoips/utils/cache_files.py
-     modified: docs/source/contribute/coding-standards.rst
-     modified: geoips/errors.py
-
-Remove module-level call() from order_based.py in favor of class-based orderbased
----------------------------------------------------------------------------------
-
-The module-level call(workflow, fnames, command_line_args) function in
-geoips.plugins.modules.procflows.order_based has been removed. The procflow
-is now a class-based OrderBased(BaseProcflowPlugin) plugin. External callers
-that imported this function directly must now resolve through the procflows
-registry: interfaces.procflows.get_plugin("order_based")(workflow_spec,
-fnames=fnames). The CLI (geoips run order_based) is unchanged from a user
-perspective.
-
-::
-
-     modified: geoips/plugins/modules/procflows/order_based.py
-     modified: geoips/commandline/geoips_run.py
-
-Remove outputs field from steps
--------------------------------
-
-The functionality provided by the `outputs` field in workflow steps has
-been superseeded by expanded use of `depends_on`. This PR removes all
-remaining references to `outputs`.
-
-::
-
-     added: geoips/plugins/yaml/workflows/abi_infrared_test.yaml
-     modified: docs/dev/datatree-spec.md
-     modified: docs/source/releases/latest/geoips-obp-output-checker-overrides.yaml
-     modified: docs/source/releases/latest/workflow-domain-exceptions.yaml
-     modified: environments/requirements.txt
-     modified: geoips/commandline/geoips_test.py
-     modified: geoips/config/config.py
-     modified: geoips/config/yaml_loader.py
-     modified: geoips/errors.py
-     modified: geoips/plugins/modules/procflows/config_based.py
-     modified: geoips/plugins/modules/procflows/order_based.py
-     modified: geoips/plugins/yaml/workflows/geostationary_dmw/windbarbs_dmw_high.yaml
-     modified: geoips/plugins/yaml/workflows/read_test_interpolator_v1.yaml
-     modified: geoips/plugins/yaml/workflows/read_test_v1.yaml
-     modified: geoips/plugins/yaml/workflows/read_test_v1_coverage_checker.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/example_sub_workflow.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/example_workflow.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_datatree_conversions.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_product.yaml
-     modified: geoips/plugins/yaml/workflows/unit_tests/test_product_default.yaml
-     modified: geoips/plugins/yaml/workflows/visir/Infrared.yaml
+     added: geoips/utils/types/obp_conduits.py
+     modified: geoips/interfaces/class_based_plugin.py
+     modified: geoips/utils/types/yaml_plugin_callable.py
+     modified: geoips/interfaces/class_based/workflow.py
      modified: geoips/pydantic_models/v1/workflows.py
-     modified: geoips/utils/memusg/dataframe_utils.py
-     modified: geoips/utils/yaml_utils.py
-     modified: pyproject.toml
-     modified: tests/integration_tests/test_integration.py
-     modified: tests/integration_tests/test_obp_datatree.py
-     modified: tests/integration_tests/test_obp_family_conversions.py
-     modified: tests/unit_tests/config/test_config.py
-     modified: tests/unit_tests/config/test_yaml_loader.py
-     modified: tests/unit_tests/interfaces/class_based/test_workflow.py
-     modified: tests/unit_tests/pydantic_models/v1/test_workflow_spec_model.py
-     modified: tests/unit_tests/pydantic_models/v1/workflows/test_workflow_step_definition_model.py
-
-Remove geoips test script command
----------------------------------
-
-Removed 'geoips test script' command. Includes removal of the command itself, it's
-help info, and the unit test code for that command. Removing as it is unused and
-causes quite the pain for our CI.
-
-::
-
-     deleted: tests/unit_tests/commandline/test_geoips_test_script.py
-     modified: geoips/commandline/ancillary_info/cmd_instructions.py
-     modified: geoips/commandline/geoips_test.py
-     modified: tests/unit_tests/commandline/cli_top_level_tester.py
-
-Test
-====
-
-Add obp integration tests for workflow validation
--------------------------------------------------
-
-Introduce integration tests for OBP workflows to ensure correct functionality and data flow between workflow steps.
-
-::
-
-     added: docs/source/releases/latest/obp-integration-tests.yaml
-     added: tests/integration_tests/test_obp_workflows.py
+     modified: geoips/plugins/modules/procflows/obp_utils.py
 
 Testing
 =======
@@ -1788,3 +1844,16 @@ targets: dev (editable site), dev-quick (editable base), and production
      modified: Dockerfile
      modified: Makefile
      modified: .dockerignore
+
+Test
+====
+
+Add obp integration tests for workflow validation
+-------------------------------------------------
+
+Introduce integration tests for OBP workflows to ensure correct functionality and data flow between workflow steps.
+
+::
+
+     added: docs/source/releases/latest/obp-integration-tests.yaml
+     added: tests/integration_tests/test_obp_workflows.py
